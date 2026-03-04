@@ -1,0 +1,243 @@
+/* ═══════════════════════════════════════════
+   ПЛАНАРИЙ — Дизайн-токены и темы
+   ═══════════════════════════════════════════ */
+
+:root {
+  /* ── Типографика ── */
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-size-xs: 0.6875rem;
+  /* 11px */
+  --font-size-sm: 0.8125rem;
+  /* 13px */
+  --font-size-base: 0.9375rem;
+  /* 15px */
+  --font-size-md: 1.0625rem;
+  /* 17px */
+  --font-size-lg: 1.25rem;
+  /* 20px */
+  --font-size-xl: 1.5rem;
+  /* 24px */
+  --font-size-2xl: 1.875rem;
+  /* 30px */
+
+  /* ── Размеры ── */
+  --spacing-2xs: 0.125rem;
+  /* 2px */
+  --spacing-xs: 0.25rem;
+  /* 4px */
+  --spacing-sm: 0.5rem;
+  /* 8px */
+  --spacing-md: 0.75rem;
+  /* 12px */
+  --spacing-base: 1rem;
+  /* 16px */
+  --spacing-lg: 1.5rem;
+  /* 24px */
+  --spacing-xl: 2rem;
+  /* 32px */
+  --spacing-2xl: 3rem;
+  /* 48px */
+
+  /* ── Радиусы ── */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --radius-full: 9999px;
+
+  /* ── Тени ── */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.12);
+  --shadow-drag: 0 12px 40px rgba(0, 0, 0, 0.2);
+
+  /* ── Переходы ── */
+  --transition-fast: 150ms ease;
+  --transition-base: 250ms ease;
+  --transition-slow: 400ms ease;
+  --transition-bounce: 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* ── Touch targets ── */
+  --touch-target: 44px;
+
+  /* ── Цвета задач ── */
+  --task-red: #E74C3C;
+  --task-orange: #F39C12;
+  --task-blue: #3498DB;
+  --task-green: #27AE60;
+  --task-purple: #9B59B6;
+  --task-pink: #E91E63;
+
+  /* ── Специальные ── */
+  --frog-green: #4CAF50;
+  --chaos-purple: #7C4DFF;
+  --achievement-gold: #FFD700;
+  --streak-orange: #FF6B35;
+}
+
+/* ═══════════════════════════
+   Светлая тема (по умолчанию)
+   ═══════════════════════════ */
+:root,
+[data-theme="light"] {
+  --color-bg: #F5F0E8;
+  --color-bg-secondary: #EDE6DA;
+  --color-bg-elevated: #FFFFFF;
+  --color-bg-area: #FFFFFF;
+  --color-bg-input: #F5F0E8;
+  --color-bg-hover: rgba(45, 90, 61, 0.06);
+
+  --color-surface: #FFFFFF;
+  --color-surface-hover: #F8F5EF;
+
+  --color-border: rgba(0, 0, 0, 0.08);
+  --color-border-strong: rgba(0, 0, 0, 0.15);
+  --color-divider: rgba(0, 0, 0, 0.06);
+
+  --color-text: #1A1A2E;
+  --color-text-secondary: #5A5A72;
+  --color-text-tertiary: #8E8E9F;
+  --color-text-inverse: #FFFFFF;
+
+  --color-primary: #2D5A3D;
+  --color-primary-hover: #245032;
+  --color-primary-light: rgba(45, 90, 61, 0.1);
+  --color-primary-text: #FFFFFF;
+
+  --color-accent: #6B9B7D;
+  --color-accent-light: rgba(107, 155, 125, 0.15);
+
+  --color-success: #27AE60;
+  --color-warning: #F39C12;
+  --color-danger: #E74C3C;
+
+  --color-completed: rgba(0, 0, 0, 0.35);
+  --color-completed-bg: rgba(0, 0, 0, 0.03);
+
+  --color-drag-overlay: rgba(45, 90, 61, 0.08);
+  --color-drop-highlight: rgba(45, 90, 61, 0.12);
+
+  --shadow-area: 0 1px 4px rgba(0, 0, 0, 0.06);
+
+  /* Стикеры */
+  --sticky-bg: #FEF3B2;
+  --sticky-bg-dark: #FBE68A;
+  --sticky-fold: #E6D47E;
+  --sticky-border: #E8D572;
+  --sticky-text: #3D381F;
+  --sticky-text-muted: #7A724A;
+}
+
+/* ═══════════════════════════
+   Тёмная тема
+   ═══════════════════════════ */
+[data-theme="dark"] {
+  --color-bg: #0F0F1A;
+  --color-bg-secondary: #161625;
+  --color-bg-elevated: #1C1C30;
+  --color-bg-area: #1C1C30;
+  --color-bg-input: #252540;
+  --color-bg-hover: rgba(107, 155, 125, 0.08);
+
+  --color-surface: #222238;
+  --color-surface-hover: #2A2A45;
+
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-border-strong: rgba(255, 255, 255, 0.15);
+  --color-divider: rgba(255, 255, 255, 0.06);
+
+  --color-text: #E8E6F0;
+  --color-text-secondary: #A0A0B8;
+  --color-text-tertiary: #6E6E88;
+  --color-text-inverse: #0F0F1A;
+
+  --color-primary: #6B9B7D;
+  --color-primary-hover: #7DAE8F;
+  --color-primary-light: rgba(107, 155, 125, 0.15);
+  --color-primary-text: #0F0F1A;
+
+  --color-accent: #8BC5A0;
+  --color-accent-light: rgba(139, 197, 160, 0.12);
+
+  --color-success: #2ECC71;
+  --color-warning: #F1C40F;
+  --color-danger: #E74C3C;
+
+  --color-completed: rgba(255, 255, 255, 0.3);
+  --color-completed-bg: rgba(255, 255, 255, 0.03);
+
+  --color-drag-overlay: rgba(107, 155, 125, 0.1);
+  --color-drop-highlight: rgba(107, 155, 125, 0.15);
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.5);
+  --shadow-drag: 0 12px 40px rgba(0, 0, 0, 0.6);
+  --shadow-area: 0 1px 4px rgba(0, 0, 0, 0.3);
+
+  /* Стикеры (приглушённые для тёмной темы) */
+  --sticky-bg: #4B462C;
+  --sticky-bg-dark: #3F3B25;
+  --sticky-fold: #312E1D;
+  --sticky-border: #3A3622;
+  --sticky-text: #E8E5D1;
+  --sticky-text-muted: #A19D8B;
+}
+
+/* ═══════════════════════════
+   System preference fallback
+   ═══════════════════════════ */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --color-bg: #0F0F1A;
+    --color-bg-secondary: #161625;
+    --color-bg-elevated: #1C1C30;
+    --color-bg-area: #1C1C30;
+    --color-bg-input: #252540;
+    --color-bg-hover: rgba(107, 155, 125, 0.08);
+
+    --color-surface: #222238;
+    --color-surface-hover: #2A2A45;
+
+    --color-border: rgba(255, 255, 255, 0.08);
+    --color-border-strong: rgba(255, 255, 255, 0.15);
+    --color-divider: rgba(255, 255, 255, 0.06);
+
+    --color-text: #E8E6F0;
+    --color-text-secondary: #A0A0B8;
+    --color-text-tertiary: #6E6E88;
+    --color-text-inverse: #0F0F1A;
+
+    --color-primary: #6B9B7D;
+    --color-primary-hover: #7DAE8F;
+    --color-primary-light: rgba(107, 155, 125, 0.15);
+    --color-primary-text: #0F0F1A;
+
+    --color-accent: #8BC5A0;
+    --color-accent-light: rgba(139, 197, 160, 0.12);
+
+    --color-success: #2ECC71;
+    --color-warning: #F1C40F;
+    --color-danger: #E74C3C;
+
+    --color-completed: rgba(255, 255, 255, 0.3);
+    --color-completed-bg: rgba(255, 255, 255, 0.03);
+
+    --color-drag-overlay: rgba(107, 155, 125, 0.1);
+    --color-drop-highlight: rgba(107, 155, 125, 0.15);
+
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.5);
+    --shadow-drag: 0 12px 40px rgba(0, 0, 0, 0.6);
+    --shadow-area: 0 1px 4px rgba(0, 0, 0, 0.3);
+
+    /* Стикеры (приглушённые для тёмной темы) */
+    --sticky-bg: #4B462C;
+    --sticky-bg-dark: #3F3B25;
+    --sticky-fold: #312E1D;
+    --sticky-border: #3A3622;
+    --sticky-text: #E8E5D1;
+    --sticky-text-muted: #A19D8B;
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "name": "planary",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Планарий — визуальный планировщик времени с гибкими областями",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "deploy": "npm run build && gh-pages -d dist"
+  },
+  "dependencies": {
+    "dexie": "^4.0.11"
+  },
+  "devDependencies": {
+    "gh-pages": "^6.3.0",
+    "vite": "^6.2.0"
+  }
+}

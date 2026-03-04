@@ -1,0 +1,11 @@
+/* ═══════════════════════════════════
+   ПЛАНАРИЙ — Master stylesheet
+   ═══════════════════════════════════ */
+
+@import './variables.css';
+@import './base.css';
+@import './layout.css';
+@import './components.css';
+@import './animations.css';
+@import './archive.css';
+@import './print.css';

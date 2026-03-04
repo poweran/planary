@@ -1,0 +1,127 @@
+/* ═══════════════════════════════════════════
+   ПЛАНАРИЙ — Стили для печати
+   ═══════════════════════════════════════════ */
+
+@media print {
+
+    /* Скрыть интерактивные элементы */
+    .header,
+    .task-input,
+    .area-resizer,
+    .btn,
+    .chaos-btn,
+    .theme-toggle,
+    .toast,
+    .context-menu,
+    .tag-filter,
+    .global-drop-indicator,
+    .task-card__checkbox,
+    .task-card__pin {
+        display: none !important;
+    }
+
+    /* Сбросить фон */
+    body {
+        background: white !important;
+        color: black !important;
+    }
+
+    .main-content {
+        overflow: visible !important;
+    }
+
+    /* Области — одна колонка */
+    .planning-board {
+        display: block !important;
+        height: auto !important;
+    }
+
+    .area {
+        break-inside: avoid;
+        page-break-inside: avoid;
+        margin-bottom: 1rem;
+        border: 1px solid #ccc !important;
+        border-radius: 4px;
+        padding: 0.5rem;
+    }
+
+    .area__header {
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 0.25rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .area__body {
+        overflow: visible !important;
+    }
+
+    .area--collapsed {
+        display: block !important;
+    }
+
+    .area--collapsed .area__body {
+        display: block !important;
+    }
+
+    /* Карточки задач */
+    .task-card {
+        background: white !important;
+        border: 1px solid #ddd !important;
+        box-shadow: none !important;
+        margin-bottom: 0.25rem;
+        padding: 0.25rem 0.5rem;
+        min-height: auto;
+        cursor: default;
+    }
+
+    .task-card::before,
+    .task-card::after {
+        display: none !important;
+    }
+
+    .task-card__title {
+        color: black !important;
+        font-family: serif !important;
+    }
+
+    .task-card__note-preview {
+        color: #333 !important;
+    }
+
+    /* Теги */
+    .tag-badge {
+        border: 1px solid #999;
+        background: transparent !important;
+        color: black !important;
+    }
+
+    /* Цветные полоски */
+    .task-card--color-red {
+        border-left-color: #E74C3C !important;
+    }
+
+    .task-card--color-orange {
+        border-left-color: #F39C12 !important;
+    }
+
+    .task-card--color-blue {
+        border-left-color: #3498DB !important;
+    }
+
+    .task-card--color-green {
+        border-left-color: #27AE60 !important;
+    }
+
+    .task-card--color-purple {
+        border-left-color: #9B59B6 !important;
+    }
+
+    .task-card--color-pink {
+        border-left-color: #E91E63 !important;
+    }
+
+    /* Подзадачи */
+    .task-node__subtasks {
+        border-left-color: #999 !important;
+    }
+}

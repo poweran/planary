@@ -1,0 +1,532 @@
+/* ═══════════════════════════════════════════
+   ПЛАНАРИЙ — Компоненты
+   ═══════════════════════════════════════════ */
+
+/* ── Карточка задачи (Sticky Note) ── */
+.task-card {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-md);
+
+    /* Жёлтый стикер с загнутым уголком: вырезаем правый нижний угол */
+    background: linear-gradient(-45deg, transparent 12px, var(--sticky-bg) 12px, var(--sticky-bg-dark) 100%);
+    color: var(--sticky-text);
+    border-radius: 2px;
+    border: none;
+    box-shadow: none;
+    box-sizing: border-box;
+
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
+    transition: all var(--transition-fast);
+    position: relative;
+    min-height: var(--touch-target);
+    touch-action: none;
+    margin-bottom: var(--spacing-2xs);
+    margin-top: 10px;
+    /* Отступ для булавки */
+}
+
+/* Булавка */
+.task-card__pin {
+    position: absolute;
+    top: -10px;
+    right: -2px;
+    /* Чуть правее (было 8px) */
+    width: 24px;
+    height: 24px;
+    z-index: 10;
+    pointer-events: none;
+    transition: transform var(--transition-fast);
+}
+
+/* Эффект проткнутой бумаги (дырочка) */
+.task-card__pin::before {
+    content: "";
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
+    width: 8px;
+    height: 4px;
+    background-color: rgba(0, 0, 0, 0.85);
+    border-radius: 50%;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 1), 0 1px 1px rgba(255, 255, 255, 0.5);
+    z-index: 1;
+}
+
+/* Иконка булавки с укороченной иголкой */
+.task-card__pin::after {
+    content: "📌";
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-size: 20px;
+    transform: rotate(15deg);
+    filter: drop-shadow(-5px 2px 2px rgba(0, 0, 0, 0.2));
+    /* Тень сдвинута вправо на 4px */
+    clip-path: inset(0 0 9px 4px);
+    /* Игла укорочена на 5px (всего 9px обрезано снизу) */
+    z-index: 2;
+}
+
+.task-card::after {
+    content: "";
+    /* Загнутый уголок */
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 16px;
+    height: 16px;
+    background: linear-gradient(-45deg, transparent 50%, var(--sticky-fold) 50%);
+    border-top-left-radius: 2px;
+    box-shadow: -1px -1px 3px rgba(0, 0, 0, 0.1);
+    pointer-events: none;
+}
+
+.task-card:hover {
+    z-index: 2;
+}
+
+.task-card:active {
+    cursor: grabbing;
+}
+
+/* ── Индикаторы перетаскивания (Drop Zones) ── */
+/* ── Глобальный индикатор перетаскивания (Никак не влияет на карточки) ── */
+.global-drop-indicator {
+    position: fixed;
+    z-index: 999998;
+    pointer-events: none;
+    display: none;
+    transition: all 0.05s linear;
+}
+
+.global-drop-indicator--line {
+    background: var(--color-primary);
+    border-radius: 2px;
+}
+
+.global-drop-indicator--inside {
+    background: linear-gradient(-45deg, transparent 12px, var(--color-primary) 12px);
+    opacity: 0.15;
+    border-radius: 2px;
+}
+
+.global-drop-indicator--area {
+    background: var(--color-primary);
+    opacity: 0.05;
+    border-radius: var(--radius-md);
+}
+
+.task-card--dragging {
+    opacity: 0.3;
+}
+
+.task-card--ghost {
+    position: fixed;
+    z-index: 999999 !important;
+    pointer-events: none;
+    filter: drop-shadow(0 15px 15px rgba(0, 0, 0, 0.15)) drop-shadow(0 5px 5px rgba(0, 0, 0, 0.1));
+    transform-origin: center center;
+    opacity: 0.95;
+    animation: ghostFloat 2s ease-in-out infinite alternate !important;
+    transition: none !important;
+    margin: 0 !important;
+}
+
+.task-card--completed {
+    opacity: 0.6;
+    filter: grayscale(0.5);
+}
+
+.task-card--completed .task-card__title {
+    text-decoration: line-through;
+    color: var(--color-completed);
+}
+
+/* Цветная полоска слева */
+.task-card--color-red {
+    border-left: 3px solid var(--task-red);
+}
+
+.task-card--color-orange {
+    border-left: 3px solid var(--task-orange);
+}
+
+.task-card--color-blue {
+    border-left: 3px solid var(--task-blue);
+}
+
+.task-card--color-green {
+    border-left: 3px solid var(--task-green);
+}
+
+.task-card--color-purple {
+    border-left: 3px solid var(--task-purple);
+}
+
+.task-card--color-pink {
+    border-left: 3px solid var(--task-pink);
+}
+
+/* ── Иерархия задач (Подзадачи) ── */
+.task-node {
+    display: flex;
+    flex-direction: column;
+}
+
+.task-node__subtasks {
+    margin-left: var(--spacing-md);
+    padding-left: var(--spacing-sm);
+    border-left: 2px dashed var(--color-border);
+    display: flex;
+    flex-direction: column;
+}
+
+/* ── Чекбокс задачи ── */
+.task-card__checkbox {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--color-border-strong);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    margin-top: 2px;
+    min-width: 20px;
+    min-height: 20px;
+}
+
+.task-card__checkbox:hover {
+    border-color: var(--color-primary);
+    background: var(--color-primary-light);
+}
+
+.task-card__checkbox--checked {
+    background: var(--color-success);
+    border-color: var(--color-success);
+}
+
+.task-card__checkbox--checked svg {
+    color: white;
+}
+
+/* ── Тело задачи ── */
+.task-card__body {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2xs);
+}
+
+.task-card__title {
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    color: var(--sticky-text);
+    line-height: 1.4;
+    word-wrap: break-word;
+    font-family: 'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', var(--font-family);
+}
+
+.task-card__title-input {
+    width: 100%;
+    padding: 2px 4px;
+    margin: -2px -4px;
+    border: 1px dashed var(--sticky-text-muted);
+    border-radius: 2px;
+    background: rgba(255, 255, 255, 0.3);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    color: var(--sticky-text);
+    outline: none;
+    font-family: 'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', var(--font-family);
+}
+
+.task-card__title-input:focus {
+    background: rgba(255, 255, 255, 0.6);
+    border-color: var(--color-primary);
+}
+
+.task-card__note-preview {
+    font-size: var(--font-size-xs);
+    color: var(--sticky-text-muted);
+    line-height: 1.3;
+    max-height: 2.6em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    font-family: 'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', var(--font-family);
+}
+
+.task-card__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-2xs);
+    margin-top: var(--spacing-2xs);
+}
+
+/* ── Бейдж тега ── */
+.tag-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 1px 8px;
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-xs);
+    font-weight: 500;
+    line-height: 1.5;
+    white-space: nowrap;
+    gap: var(--spacing-2xs);
+}
+
+.tag-badge--small {
+    padding: 0 6px;
+    font-size: 10px;
+}
+
+/* ── Фильтр тегов ── */
+.tag-filter {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding: var(--spacing-xs) 0;
+    -webkit-overflow-scrolling: touch;
+}
+
+.tag-filter::-webkit-scrollbar {
+    display: none;
+}
+
+.tag-filter__item {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-2xs);
+    padding: var(--spacing-2xs) var(--spacing-sm);
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-xs);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    white-space: nowrap;
+    border: 1px solid var(--color-border);
+    color: var(--color-text-secondary);
+    min-height: 28px;
+}
+
+.tag-filter__item:hover {
+    border-color: var(--color-border-strong);
+    background: var(--color-bg-hover);
+}
+
+.tag-filter__item--active {
+    background: var(--color-primary-light);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}
+
+/* ── Кнопки ── */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-sm) var(--spacing-base);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    transition: all var(--transition-fast);
+    min-height: var(--touch-target);
+    min-width: var(--touch-target);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn--primary {
+    background: var(--color-primary);
+    color: var(--color-primary-text);
+}
+
+.btn--primary:hover {
+    background: var(--color-primary-hover);
+    box-shadow: var(--shadow-sm);
+}
+
+.btn--ghost {
+    color: var(--color-text-secondary);
+}
+
+.btn--ghost:hover {
+    background: var(--color-bg-hover);
+    color: var(--color-text);
+}
+
+.btn--icon {
+    padding: var(--spacing-sm);
+    border-radius: var(--radius-md);
+}
+
+.btn--small {
+    min-height: 32px;
+    min-width: 32px;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: var(--font-size-xs);
+}
+
+/* ── Chaos button ── */
+.chaos-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-2xs) var(--spacing-sm);
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-xs);
+    font-weight: 500;
+    color: var(--chaos-purple);
+    background: rgba(124, 77, 255, 0.1);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    min-height: 28px;
+}
+
+.chaos-btn:hover {
+    background: rgba(124, 77, 255, 0.2);
+    transform: translateY(-1px);
+}
+
+.chaos-btn:active {
+    transform: translateY(0);
+}
+
+/* ── Theme toggle ── */
+.theme-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--touch-target);
+    height: var(--touch-target);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-lg);
+    color: var(--color-text-secondary);
+    transition: all var(--transition-fast);
+    cursor: pointer;
+}
+
+.theme-toggle:hover {
+    background: var(--color-bg-hover);
+    color: var(--color-text);
+}
+
+/* ── Context menu / dropdown ── */
+.context-menu {
+    position: fixed;
+    z-index: 200;
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    padding: var(--spacing-xs);
+    min-width: 180px;
+    animation: menuFadeIn 150ms ease;
+}
+
+.context-menu__item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-sm);
+    color: var(--color-text);
+    cursor: pointer;
+    transition: background var(--transition-fast);
+    min-height: var(--touch-target);
+}
+
+.context-menu__item:hover {
+    background: var(--color-bg-hover);
+}
+
+.context-menu__item--danger {
+    color: var(--color-danger);
+}
+
+.context-menu__divider {
+    height: 1px;
+    background: var(--color-divider);
+    margin: var(--spacing-xs) 0;
+}
+
+/* ── Color picker ── */
+.color-picker {
+    display: flex;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-sm);
+}
+
+.color-picker__swatch {
+    width: 24px;
+    height: 24px;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all var(--transition-fast);
+}
+
+.color-picker__swatch:hover {
+    transform: scale(1.2);
+}
+
+.color-picker__swatch--active {
+    border-color: var(--color-text);
+    box-shadow: var(--shadow-sm);
+}
+
+.color-picker__swatch--none {
+    background: var(--color-bg);
+    border: 2px dashed var(--color-border-strong);
+}
+
+/* ── Toast / notification ── */
+.toast {
+    position: fixed;
+    bottom: var(--spacing-lg);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 300;
+    padding: var(--spacing-sm) var(--spacing-lg);
+    background: var(--color-text);
+    color: var(--color-text-inverse);
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    box-shadow: var(--shadow-lg);
+    animation: toastSlideUp 300ms ease;
+}
+
+/* ── Streak counter ── */
+.streak {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-2xs);
+    padding: var(--spacing-2xs) var(--spacing-sm);
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    color: var(--streak-orange);
+    background: rgba(255, 107, 53, 0.1);
+}
+
+.streak__icon {
+    font-size: var(--font-size-sm);
+    line-height: 1;
+}

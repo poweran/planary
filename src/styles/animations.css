@@ -1,0 +1,225 @@
+/* ═══════════════════════════════════════════
+   ПЛАНАРИЙ — Анимации
+   ═══════════════════════════════════════════ */
+
+/* ── Ghost Float (Drag&Drop) ── */
+@keyframes ghostFloat {
+    from {
+        transform: rotate(3deg) translateY(0);
+    }
+
+    to {
+        transform: rotate(5deg) translateY(-6px);
+    }
+}
+
+/* ── Task complete ── */
+@keyframes taskComplete {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    30% {
+        transform: scale(1.02);
+    }
+
+    100% {
+        transform: scale(0.95);
+        opacity: 0;
+        max-height: 0;
+        padding: 0;
+        margin: 0;
+        border-width: 0;
+        overflow: hidden;
+    }
+}
+
+.task-card--completing {
+    animation: taskComplete 500ms ease forwards;
+    pointer-events: none;
+}
+
+/* ── Checkbox check ── */
+@keyframes checkBounce {
+    0% {
+        transform: scale(0);
+    }
+
+    50% {
+        transform: scale(1.3);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.task-card__checkbox--animating svg {
+    animation: checkBounce 300ms var(--transition-bounce);
+}
+
+/* ── Chaos shuffle ── */
+@keyframes chaosShuffle {
+    0% {
+        transform: translateY(0) rotate(0deg);
+    }
+
+    25% {
+        transform: translateY(-8px) rotate(-2deg);
+    }
+
+    50% {
+        transform: translateY(4px) rotate(1deg);
+    }
+
+    75% {
+        transform: translateY(-3px) rotate(-0.5deg);
+    }
+
+    100% {
+        transform: translateY(0) rotate(0deg);
+    }
+}
+
+.task-card--shuffling {
+    animation: chaosShuffle 400ms ease;
+}
+
+/* ── Context menu appear ── */
+@keyframes menuFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(-4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* ── Toast slide up ── */
+@keyframes toastSlideUp {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+/* ── Toast slide out ── */
+@keyframes toastSlideOut {
+    from {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+
+    to {
+        opacity: 0;
+        transform: translateX(-50%) translateY(20px);
+    }
+}
+
+.toast--leaving {
+    animation: toastSlideOut 200ms ease forwards;
+}
+
+/* ── Streak pulse ── */
+@keyframes streakPulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.15);
+    }
+}
+
+.streak--pulse .streak__icon {
+    animation: streakPulse 600ms ease;
+}
+
+/* ── Area highlight on drop ── */
+@keyframes dropGlow {
+    0% {
+        box-shadow: inset 0 0 0 0 var(--color-primary-light);
+    }
+
+    50% {
+        box-shadow: inset 0 0 20px 0 var(--color-primary-light);
+    }
+
+    100% {
+        box-shadow: inset 0 0 0 0 var(--color-primary-light);
+    }
+}
+
+.area--just-dropped {
+    animation: dropGlow 400ms ease;
+}
+
+/* ── Fade in for new tasks ── */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.task-card--new {
+    animation: fadeInUp 250ms ease;
+}
+
+/* ── Empty state bob ── */
+@keyframes emptyBob {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-4px);
+    }
+}
+
+.area__empty-icon {
+    animation: emptyBob 3s ease-in-out infinite;
+}
+
+/* ── Spinner ── */
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--color-border);
+    border-top-color: var(--color-primary);
+    border-radius: 50%;
+    animation: spin 600ms linear infinite;
+}
+
+/* ── Theme transition ── */
+.theme-transitioning,
+.theme-transitioning * {
+    transition: background-color 400ms ease,
+        color 400ms ease,
+        border-color 400ms ease,
+        box-shadow 400ms ease !important;
+}
