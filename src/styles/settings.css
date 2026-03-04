@@ -1,0 +1,123 @@
+/* ═══════════════════════════════════════════
+   ПЛАНАРИЙ — Настройки
+   ═══════════════════════════════════════════ */
+
+.settings-view {
+    padding: var(--spacing-lg);
+    max-width: 700px;
+    margin: 0 auto;
+    width: 100%;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.settings-view__title {
+    font-size: var(--font-size-lg);
+    font-weight: 700;
+    color: var(--color-text);
+    margin-bottom: var(--spacing-lg);
+}
+
+/* ── Секции ── */
+.settings-section {
+    margin-bottom: var(--spacing-lg);
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-md);
+}
+
+.settings-section__title {
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: var(--spacing-md);
+    padding-bottom: var(--spacing-xs);
+    border-bottom: 1px solid var(--color-divider);
+}
+
+/* ── Действия ── */
+.settings-action {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-md);
+    padding: var(--spacing-sm) 0;
+}
+
+.settings-action+.settings-action {
+    border-top: 1px solid var(--color-divider);
+}
+
+.settings-action__info {
+    flex: 1;
+    min-width: 0;
+}
+
+.settings-action__title {
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    color: var(--color-text);
+}
+
+.settings-action__desc {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-tertiary);
+    margin-top: var(--spacing-2xs);
+}
+
+/* ── Кнопки ── */
+.btn--secondary {
+    padding: var(--spacing-xs) var(--spacing-md);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-size: var(--font-size-xs);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all var(--transition-fast);
+}
+
+.btn--secondary:hover {
+    background: var(--color-bg-hover);
+    border-color: var(--color-primary);
+}
+
+.btn--danger {
+    padding: var(--spacing-xs) var(--spacing-md);
+    border: 1px solid var(--color-danger, #E74C3C);
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: var(--color-danger, #E74C3C);
+    font-size: var(--font-size-xs);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all var(--transition-fast);
+}
+
+.btn--danger:hover {
+    background: var(--color-danger, #E74C3C);
+    color: white;
+}
+
+/* ── О приложении ── */
+.settings-about {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+}
+
+.settings-about p {
+    margin: var(--spacing-2xs) 0;
+}
+
+.settings-link {
+    color: var(--color-primary);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.settings-link:hover {
+    text-decoration: underline;
+}

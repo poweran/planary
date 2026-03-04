@@ -8,6 +8,7 @@ import { Header } from './components/Header.js';
 import { PlanningBoard } from './components/PlanningBoard.js';
 import { ArchiveView } from './components/ArchiveView.js';
 import { AchievementsView } from './components/AchievementsView.js';
+import { SettingsView } from './components/SettingsView.js';
 import { initToasts } from './components/Toast.js';
 import { midnightService } from './services/midnightService.js';
 import { achievementService } from './services/achievementService.js';
@@ -57,8 +58,10 @@ export class App {
                 const achievementsView = new AchievementsView(main);
                 await achievementsView.init();
             })
-            .route('#/settings', () => {
-                main.innerHTML = '<div style="padding: 2rem; text-align: center; color: var(--color-text-tertiary);">⚙️ Настройки — скоро</div>';
+            .route('#/settings', async () => {
+                main.innerHTML = '';
+                const settingsView = new SettingsView(main);
+                await settingsView.init();
             });
 
         // Тосты

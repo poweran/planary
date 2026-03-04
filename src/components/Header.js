@@ -67,6 +67,14 @@ export class Header {
         });
         actions.appendChild(achieveLink);
 
+        // Навигация: Настройки
+        const settingsLink = createElement('a', {
+            className: 'header__nav-link',
+            attrs: { href: '#/settings', title: 'Настройки' },
+            text: '⚙️',
+        });
+        actions.appendChild(settingsLink);
+
         // Печать
         const printBtn = createElement('button', {
             className: 'header__nav-link',

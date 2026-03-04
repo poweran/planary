@@ -263,3 +263,19 @@
     color: var(--color-text-tertiary);
     font-style: italic;
 }
+
+.achievement-card__share {
+    position: absolute;
+    top: var(--spacing-xs);
+    right: var(--spacing-xs);
+    opacity: 0;
+    transition: opacity var(--transition-fast);
+}
+
+.achievement-card:hover .achievement-card__share {
+    opacity: 1;
+}
+
+.achievement-card {
+    position: relative;
+}

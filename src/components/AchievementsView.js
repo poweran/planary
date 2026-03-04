@@ -4,6 +4,7 @@
 
 import { createElement } from '../utils/dom.js';
 import { achievementService } from '../services/achievementService.js';
+import { events, Events } from '../core/events.js';
 
 export class AchievementsView {
     constructor(containerEl) {
@@ -58,6 +59,29 @@ export class AchievementsView {
                         day: 'numeric', month: 'long', year: 'numeric'
                     }),
                 }));
+            }
+
+            // Кнопка «Поделиться»
+            if (ach.unlocked) {
+                const shareBtn = createElement('button', {
+                    className: 'btn btn--ghost btn--small achievement-card__share',
+                    attrs: { title: 'Поделиться' },
+                    text: '📤',
+                });
+                shareBtn.addEventListener('click', async () => {
+                    const text = `🦎 Планарий: Я получил достижение «${ach.title}» ${ach.icon}!`;
+                    if (navigator.share) {
+                        try {
+                            await navigator.share({ text });
+                        } catch (e) {
+                            // Пользователь отменил
+                        }
+                    } else {
+                        await navigator.clipboard.writeText(text);
+                        events.emit(Events.TOAST, '📋 Скопировано в буфер обмена!');
+                    }
+                });
+                card.appendChild(shareBtn);
             }
 
             card.appendChild(icon);
