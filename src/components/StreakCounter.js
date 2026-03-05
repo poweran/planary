@@ -12,8 +12,10 @@ export function renderStreak(count) {
     const streakLink = createElement('a', {
         className: 'header__nav-link streak-header-link',
         attrs: { href: '#/streak', title: `Огненная серия: ${count} дн. 🔥` },
-        text: `🔥${count}`,
-        style: { fontSize: 'var(--font-size-md)', fontWeight: 'bold' }
+        children: [
+            createElement('span', { className: 'header__nav-icon', text: `🔥${count}` }),
+            createElement('span', { className: 'header__nav-label', text: 'Серия' }),
+        ],
     });
 
     streakLink.addEventListener('click', (e) => {

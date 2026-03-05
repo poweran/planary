@@ -37,9 +37,14 @@ export class ThemeToggle {
 
     render() {
         const btn = createElement('button', {
-            className: 'theme-toggle',
+            className: 'theme-toggle header__nav-link',
             attrs: { 'aria-label': 'Переключить тему' },
         });
+
+        this._iconEl = createElement('span', { className: 'header__nav-icon' });
+        this._labelEl = createElement('span', { className: 'header__nav-label' });
+        btn.appendChild(this._iconEl);
+        btn.appendChild(this._labelEl);
 
         this._btn = btn;
         this._updateIcon(btn);
@@ -74,7 +79,14 @@ export class ThemeToggle {
 
     _updateIcon(btn) {
         const meta = THEME_META[this.currentTheme];
-        btn.innerHTML = svgIcon(meta.icon(), 20);
+        if (this._iconEl) {
+            this._iconEl.innerHTML = svgIcon(meta.icon(), 20);
+        } else {
+            btn.innerHTML = svgIcon(meta.icon(), 20);
+        }
+        if (this._labelEl) {
+            this._labelEl.textContent = 'Тема';
+        }
         btn.title = meta.label;
     }
 }

@@ -10,7 +10,10 @@ export class TagManager {
         const link = createElement('a', {
             className: 'header__nav-link',
             attrs: { href: '#/tags', title: 'Управление тегами' },
-            text: '🏷️',
+            children: [
+                createElement('span', { className: 'header__nav-icon', text: '🏷️' }),
+                createElement('span', { className: 'header__nav-label', text: 'Теги' }),
+            ],
         });
 
         link.addEventListener('click', (e) => {

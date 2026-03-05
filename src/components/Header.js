@@ -58,7 +58,10 @@ export class Header {
         const archiveLink = createElement('a', {
             className: 'header__nav-link',
             attrs: { href: '#/archive', title: 'Архив' },
-            text: '📦',
+            children: [
+                createElement('span', { className: 'header__nav-icon', text: '📦' }),
+                createElement('span', { className: 'header__nav-label', text: 'Архив' }),
+            ],
         });
         archiveLink.addEventListener('click', (e) => {
             if (window.location.hash === '#/archive') {
@@ -72,7 +75,10 @@ export class Header {
         const achieveLink = createElement('a', {
             className: 'header__nav-link',
             attrs: { href: '#/achievements', title: 'Достижения' },
-            text: '🏆',
+            children: [
+                createElement('span', { className: 'header__nav-icon', text: '🏆' }),
+                createElement('span', { className: 'header__nav-label', text: 'Цели' }),
+            ],
         });
         achieveLink.addEventListener('click', (e) => {
             if (window.location.hash === '#/achievements') {
@@ -86,7 +92,10 @@ export class Header {
         const settingsLink = createElement('a', {
             className: 'header__nav-link',
             attrs: { href: '#/settings', title: 'Настройки' },
-            text: '⚙️',
+            children: [
+                createElement('span', { className: 'header__nav-icon', text: '⚙️' }),
+                createElement('span', { className: 'header__nav-label', text: 'Настройки' }),
+            ],
         });
         settingsLink.addEventListener('click', (e) => {
             if (window.location.hash === '#/settings') {
@@ -100,7 +109,10 @@ export class Header {
         const focusBtn = createElement('a', {
             className: 'header__nav-link',
             attrs: { href: '#/pomodoro', title: 'Фокус-режим (Pomodoro)' },
-            text: '🍅',
+            children: [
+                createElement('span', { className: 'header__nav-icon', text: '🍅' }),
+                createElement('span', { className: 'header__nav-label', text: 'Фокус' }),
+            ],
         });
         focusBtn.addEventListener('click', (e) => {
             if (window.location.hash === '#/pomodoro') {
