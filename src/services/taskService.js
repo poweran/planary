@@ -301,16 +301,36 @@ class TaskService {
         return this.softDelete(id);
     }
 
-    /**
-     * Перемешать задачи в Хаосе
-     */
     async shuffleChaos() {
-        const tasks = await this.getByArea('chaos');
-        const shuffled = [...tasks].sort(() => Math.random() - 0.5);
+        const allTasks = await this.getByArea('chaos');
+        const activeTasks = allTasks.filter(t => !t.completed);
+
+        if (activeTasks.length <= 1) return;
+
+        const originalActiveIds = activeTasks.map(t => t.id);
+        let shuffledActive;
+
+        // Перемешиваем только активные задачи, пока не получим новый порядок
+        do {
+            shuffledActive = [...activeTasks];
+            for (let i = shuffledActive.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffledActive[i], shuffledActive[j]] = [shuffledActive[j], shuffledActive[i]];
+            }
+        } while (shuffledActive.every((t, i) => t.id === originalActiveIds[i]));
+
+        // Собираем список обратно, заменяя места активных задач перемешанными версиями
+        let activeIdx = 0;
+        const resultTasks = allTasks.map(t => {
+            if (!t.completed) {
+                return shuffledActive[activeIdx++];
+            }
+            return t;
+        });
 
         await db.transaction('rw', db.tasks, async () => {
-            for (let i = 0; i < shuffled.length; i++) {
-                await db.tasks.update(shuffled[i].id, { order: i });
+            for (let i = 0; i < resultTasks.length; i++) {
+                await db.tasks.update(resultTasks[i].id, { order: i });
             }
         });
 

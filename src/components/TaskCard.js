@@ -117,6 +117,20 @@ export function renderTaskCard(task, allTags = []) {
                         color: styles.color,
                     },
                 });
+
+                // Кнопка удаления тега
+                const removeBtn = createElement('span', {
+                    className: 'tag-badge__remove',
+                    html: svgIcon(Icons.x, 8),
+                    attrs: { title: 'Открепить тег' }
+                });
+                removeBtn.addEventListener('click', async (e) => {
+                    e.stopPropagation();
+                    const newTags = task.tags.filter(id => id !== tagId);
+                    await taskService.update(task.id, { tags: newTags });
+                });
+                badge.appendChild(removeBtn);
+
                 tagsContainer.appendChild(badge);
             }
         }
@@ -127,7 +141,7 @@ export function renderTaskCard(task, allTags = []) {
     // Menu (правый клик)
     card.addEventListener('contextmenu', (e) => {
         e.preventDefault();
-        showTaskContextMenu(e, task);
+        showTaskContextMenu(e, task, allTags);
     });
 
     card.appendChild(checkbox);
@@ -176,7 +190,7 @@ function startInlineEdit(card, task, titleEl) {
 
     titleEl.replaceWith(input);
     input.focus();
-    input.select();
+    input.selectionStart = input.selectionEnd = input.value.length;
 
     const save = async () => {
         const rawValue = input.value.trim();
@@ -192,10 +206,11 @@ function startInlineEdit(card, task, titleEl) {
                 tagIds.push(tag.id);
             }
 
-            // Объединяем со старыми тегами (если новых нет — не затираем старые)
-            const mergedTags = tagIds.length > 0
-                ? [...new Set([...(task.tags || []), ...tagIds])]
-                : (task.tags || []);
+            // Если в тексте есть теги — они заменяют/дополняют текущие
+            // Синхронизация: если в тексте нет тега, который там БЫЛ (через #), мы его убираем?
+            // Для простоты: всегда объединяем. Но если пользователь удалил #тег из текста, 
+            // он ожидает что он исчезнет.
+            const mergedTags = [...new Set([...(task.tags || []), ...tagIds])];
 
             await taskService.update(task.id, { title: newTitle, tags: mergedTags });
         } else {
@@ -225,7 +240,7 @@ function startInlineEdit(card, task, titleEl) {
 /**
  * Контекстное меню задачи
  */
-function showTaskContextMenu(e, task) {
+function showTaskContextMenu(e, task, allTags = []) {
     // Убираем предыдущее меню
     const old = document.querySelector('.context-menu');
     if (old) old.remove();
@@ -454,6 +469,42 @@ function showTaskContextMenu(e, task) {
             menu.remove();
         });
         reminderSubmenu.appendChild(clearItem);
+    }
+
+    // Теги
+    const tagsLabel = createElement('div', {
+        className: 'context-menu__item context-menu__has-submenu',
+        text: '🏷️ Теги',
+    });
+
+    const tagsSubmenu = createElement('div', { className: 'context-menu__submenu' });
+    tagsLabel.appendChild(tagsSubmenu);
+    menu.appendChild(tagsLabel);
+
+    if (allTags.length === 0) {
+        tagsSubmenu.appendChild(createElement('div', {
+            className: 'context-menu__item',
+            style: { fontSize: 'var(--font-size-xs)', opacity: 0.5 },
+            text: 'Нет созданных тегов',
+        }));
+    } else {
+        for (const tag of allTags) {
+            const isActive = task.tags && task.tags.includes(tag.id);
+            const item = createElement('div', {
+                className: `context-menu__item${isActive ? ' context-menu__item--active' : ''}`,
+                style: { fontSize: 'var(--font-size-xs)' },
+                html: `<span style="color: ${tag.color || 'inherit'}">#${tag.name}</span>${isActive ? ' ✓' : ''}`,
+            });
+            item.addEventListener('click', async (e) => {
+                e.stopPropagation();
+                const newTags = isActive
+                    ? task.tags.filter(id => id !== tag.id)
+                    : [...(task.tags || []), tag.id];
+                await taskService.update(task.id, { tags: newTags });
+                menu.remove();
+            });
+            tagsSubmenu.appendChild(item);
+        }
     }
 
     // Позиционирование

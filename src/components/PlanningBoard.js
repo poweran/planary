@@ -17,42 +17,56 @@ export class PlanningBoard {
         this.container = containerEl;
         this.boardEl = null;
         this._unsubscribers = [];
+        this._renderQueue = Promise.resolve();
     }
 
     async init() {
-        await this.render();
         this._bindEvents();
+        await this.render();
     }
 
-    async render() {
-        // Загружаем данные
-        const [tasks, tags, areas] = await Promise.all([
-            taskService.getAll(),
-            tagService.getAll(),
-            areaService.getAll(),
-        ]);
+    /**
+     * Запрос на перерисовку (с дебаунсингом и очередью)
+     */
+    render() {
+        if (this._debounceTimer) clearTimeout(this._debounceTimer);
 
-        appStore.state.tasks = tasks;
-        appStore.state.tags = tags;
-        appStore.state.areas = areas;
+        this._debounceTimer = setTimeout(() => {
+            this._renderQueue = this._renderQueue.then(() => this._performRender());
+        }, 32); // 32ms — баланс между отзывчивостью и стабильностью
+    }
 
-        // Очищаем drop targets
-        clearDropTargets();
-
-        // Создаём board
-        if (!this.boardEl) {
-            this.boardEl = createElement('div', { className: 'planning-board' });
-            this.container.appendChild(this.boardEl);
-        }
-
-        // Рендерим 4 области
-        const activeFilter = appStore.state.activeFilter;
-
+    /**
+     * Внутренний метод рендеринга
+     */
+    async _performRender() {
         const updateDOM = async () => {
+            // Загружаем данные
+            const [tasks, tags, areas] = await Promise.all([
+                taskService.getAll(),
+                tagService.getAll(),
+                areaService.getAll(),
+            ]);
+
+            appStore.state.tasks = tasks;
+            appStore.state.tags = tags;
+            appStore.state.areas = areas;
+
+            // Очищаем drop targets
+            clearDropTargets();
+
+            // Создаём board
+            if (!this.boardEl) {
+                this.boardEl = createElement('div', { className: 'planning-board' });
+                this.container.appendChild(this.boardEl);
+            }
+
             clearElement(this.boardEl);
             for (const area of areas) {
                 let areaTasks = tasks.filter(t => t.areaId === area.id);
-                if (activeFilter) areaTasks = taskService.filterByTag(areaTasks, activeFilter);
+                if (appStore.state.activeFilter) {
+                    areaTasks = taskService.filterByTag(areaTasks, appStore.state.activeFilter);
+                }
                 const searchQuery = appStore.state.searchQuery || '';
                 if (searchQuery.trim()) {
                     const q = searchQuery.trim().toLowerCase();
@@ -68,7 +82,24 @@ export class PlanningBoard {
         };
 
         if (document.startViewTransition) {
-            document.startViewTransition(updateDOM);
+            let domUpdated = false;
+            const wrappedUpdateDOM = async () => {
+                domUpdated = true;
+                await updateDOM();
+            };
+
+            try {
+                const transition = document.startViewTransition(wrappedUpdateDOM);
+
+                // Предотвращаем Uncaught ошибки для вспомогательных промисов
+                transition.ready.catch(() => { });
+                transition.updateCallbackDone.catch(() => { });
+
+                // Ждём завершения всей анимации прежде чем начать следующую задачу в очереди
+                await transition.finished;
+            } catch (e) {
+                if (!domUpdated) await updateDOM();
+            }
         } else {
             await updateDOM();
         }

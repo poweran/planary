@@ -144,10 +144,8 @@ export class TagsView {
             text: '✕',
         });
         delBtn.addEventListener('click', async () => {
-            if (confirm(`Удалить тег «#${tag.name}»?\nОн будет убран из всех задач.`)) {
-                await tagService.delete(tag.id);
-                await this.render();
-            }
+            await tagService.delete(tag.id);
+            await this.render();
         });
         badge.appendChild(delBtn);
         card.appendChild(badge);
