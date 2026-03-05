@@ -135,6 +135,82 @@ class ArchiveService {
 
         return result;
     }
+
+    /**
+     * Подробная статистика серии
+     */
+    async getStreakStats() {
+        const allTasks = await db.tasks.toArray();
+        const allCompleted = allTasks.filter(t => t.completed && t.completedAt);
+
+        if (allCompleted.length === 0) {
+            return { currentStreak: 0, bestStreak: 0, totalActiveDays: 0, totalTasks: 0 };
+        }
+
+        const days = new Set();
+        for (const t of allCompleted) {
+            const d = new Date(t.completedAt);
+            days.add(`${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`);
+        }
+
+        // Calculate streaks
+        const sortedDays = Array.from(days).map(str => {
+            const [y, m, d] = str.split('-').map(Number);
+            return new Date(y, m, d).getTime();
+        }).sort((a, b) => a - b);
+
+        let bestStreak = 0;
+        let tempStreak = 0;
+        let lastDay = null;
+
+        const ONE_DAY = 24 * 60 * 60 * 1000;
+
+        for (const time of sortedDays) {
+            if (lastDay === null) {
+                tempStreak = 1;
+            } else {
+                const diffDays = Math.round((time - lastDay) / ONE_DAY);
+                if (diffDays === 1) {
+                    tempStreak++;
+                } else if (diffDays > 1) {
+                    tempStreak = 1;
+                }
+            }
+            if (tempStreak > bestStreak) bestStreak = tempStreak;
+            lastDay = time;
+        }
+
+        // Current streak logic
+        const now = new Date();
+        let currentStreak = 0;
+        const check = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+        while (true) {
+            const key = `${check.getFullYear()}-${check.getMonth()}-${check.getDate()}`;
+            if (days.has(key)) {
+                currentStreak++;
+                check.setDate(check.getDate() - 1);
+            } else {
+                // Если сегодня еще ничего нет, проверяем вчерашний день
+                if (currentStreak === 0) {
+                    const yDay = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
+                    const yKey = `${yDay.getFullYear()}-${yDay.getMonth()}-${yDay.getDate()}`;
+                    if (days.has(yKey)) {
+                        check.setDate(check.getDate() - 1);
+                        continue;
+                    }
+                }
+                break;
+            }
+        }
+
+        return {
+            currentStreak,
+            bestStreak,
+            totalActiveDays: days.size,
+            totalTasks: allCompleted.length
+        };
+    }
 }
 
 export const archiveService = new ArchiveService();
