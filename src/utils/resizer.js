@@ -155,13 +155,14 @@ function getColSizes(boardEl) {
 }
 
 async function saveGridSizes(boardEl) {
-    const computed = getComputedStyle(boardEl);
+    const rows = getRowSizes(boardEl);
+    const cols = getColSizes(boardEl);
     try {
         await db.settings.put({
             key: 'gridSizes',
             value: {
-                rows: computed.gridTemplateRows,
-                cols: computed.gridTemplateColumns,
+                rows: `${rows[0]}fr ${rows[1]}fr`,
+                cols: `${cols[0]}fr ${cols[1]}fr`,
             },
         });
     } catch (e) {
@@ -178,8 +179,13 @@ export async function restoreGridSizes(boardEl) {
     try {
         const setting = await db.settings.get('gridSizes');
         if (setting?.value) {
-            if (setting.value.rows) boardEl.style.gridTemplateRows = setting.value.rows;
-            if (setting.value.cols) boardEl.style.gridTemplateColumns = setting.value.cols;
+            // Игнорируем сохранённые значения в пикселях (ошибка из предыдущих версий)
+            if (setting.value.rows && !setting.value.rows.includes('px')) {
+                boardEl.style.gridTemplateRows = setting.value.rows;
+            }
+            if (setting.value.cols && !setting.value.cols.includes('px')) {
+                boardEl.style.gridTemplateColumns = setting.value.cols;
+            }
         }
     } catch (e) {
         // Ignore restore errors

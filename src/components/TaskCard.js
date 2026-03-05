@@ -300,6 +300,22 @@ function showTaskContextMenu(e, task) {
     recLabel.appendChild(recSubmenu);
     menu.appendChild(recLabel);
 
+    recLabel.addEventListener('mouseenter', () => {
+        recSubmenu.style.top = '-1px';
+        recSubmenu.style.bottom = 'auto';
+        recSubmenu.style.left = 'calc(100% - 4px)';
+        recSubmenu.style.right = 'auto';
+        const rect = recSubmenu.getBoundingClientRect();
+        if (rect.bottom > window.innerHeight) {
+            recSubmenu.style.top = 'auto';
+            recSubmenu.style.bottom = '-1px';
+        }
+        if (rect.right > window.innerWidth) {
+            recSubmenu.style.left = 'auto';
+            recSubmenu.style.right = 'calc(100% - 4px)';
+        }
+    });
+
     for (const opt of recurrenceOptions) {
         const item = createElement('div', {
             className: `context-menu__item${task.recurrence === opt.value ? ' context-menu__item--active' : ''}`,
@@ -360,6 +376,22 @@ function showTaskContextMenu(e, task) {
     const reminderSubmenu = createElement('div', { className: 'context-menu__submenu' });
     reminderLabel.appendChild(reminderSubmenu);
     menu.appendChild(reminderLabel);
+
+    reminderLabel.addEventListener('mouseenter', () => {
+        reminderSubmenu.style.top = '-1px';
+        reminderSubmenu.style.bottom = 'auto';
+        reminderSubmenu.style.left = 'calc(100% - 4px)';
+        reminderSubmenu.style.right = 'auto';
+        const rect = reminderSubmenu.getBoundingClientRect();
+        if (rect.bottom > window.innerHeight) {
+            reminderSubmenu.style.top = 'auto';
+            reminderSubmenu.style.bottom = '-1px';
+        }
+        if (rect.right > window.innerWidth) {
+            reminderSubmenu.style.left = 'auto';
+            reminderSubmenu.style.right = 'calc(100% - 4px)';
+        }
+    });
 
     for (const opt of reminderOptions) {
         const item = createElement('div', {

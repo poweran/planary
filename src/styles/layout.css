@@ -45,9 +45,12 @@
 .planning-board {
     flex: 1;
     display: grid;
-    gap: 0;
-    padding: 0;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm);
+    width: 100%;
+    height: 100%;
     min-height: 0;
+    min-width: 0;
     overflow: hidden;
 }
 
@@ -55,7 +58,6 @@
 .planning-board {
     grid-template-columns: 1fr;
     grid-template-rows: repeat(4, 1fr);
-    height: calc(100dvh - var(--touch-target) - var(--spacing-sm) * 2 - 1px);
 }
 
 /* Tablet: 2 колонки */
@@ -63,17 +65,16 @@
     .planning-board {
         grid-template-columns: 1fr 1fr;
         grid-template-rows: 1fr 1fr;
-        gap: 1px;
-        background: var(--color-border);
-        padding: 0;
+        gap: var(--spacing-md);
+        padding: var(--spacing-md);
     }
 }
 
 /* Desktop: 2×2 grid с отступами */
 @media (min-width: 1024px) {
     .planning-board {
-        gap: 1px;
-        padding: 0;
+        gap: var(--spacing-lg);
+        padding: var(--spacing-lg);
     }
 }
 
@@ -82,7 +83,11 @@
     display: flex;
     flex-direction: column;
     background: var(--color-bg-area);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
     min-height: 0;
+    min-width: 0;
     overflow: hidden;
     position: relative;
     transition: background-color var(--transition-fast);

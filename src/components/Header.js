@@ -58,6 +58,12 @@ export class Header {
             attrs: { href: '#/archive', title: 'Архив' },
             text: '📦',
         });
+        archiveLink.addEventListener('click', (e) => {
+            if (window.location.hash === '#/archive') {
+                e.preventDefault();
+                window.location.hash = '#/';
+            }
+        });
         actions.appendChild(archiveLink);
 
         // Навигация: Достижения
@@ -66,6 +72,12 @@ export class Header {
             attrs: { href: '#/achievements', title: 'Достижения' },
             text: '🏆',
         });
+        achieveLink.addEventListener('click', (e) => {
+            if (window.location.hash === '#/achievements') {
+                e.preventDefault();
+                window.location.hash = '#/';
+            }
+        });
         actions.appendChild(achieveLink);
 
         // Навигация: Настройки
@@ -73,6 +85,12 @@ export class Header {
             className: 'header__nav-link',
             attrs: { href: '#/settings', title: 'Настройки' },
             text: '⚙️',
+        });
+        settingsLink.addEventListener('click', (e) => {
+            if (window.location.hash === '#/settings') {
+                e.preventDefault();
+                window.location.hash = '#/';
+            }
         });
         actions.appendChild(settingsLink);
 

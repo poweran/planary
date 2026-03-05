@@ -40,6 +40,10 @@ export class App {
         main.style.display = 'flex';
         main.style.flexDirection = 'column';
         main.style.overflow = 'hidden';
+        main.style.minHeight = '0';
+        main.style.minWidth = '0';
+        main.style.width = '100%';
+        main.style.height = '100%';
         appEl.appendChild(main);
 
         // Routing

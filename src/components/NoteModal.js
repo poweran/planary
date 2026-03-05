@@ -42,11 +42,11 @@ export function openNoteModal(task) {
     const textarea = createElement('textarea', {
         className: 'note-modal__editor',
         attrs: {
-            placeholder: 'Заметка…\n\n' +
-                '**жирный** *курсив* `код`\n' +
-                '- пункт1\n' +
-                '- пункт2\n' +
-                '[название ссылки](адрес ссылки)',
+            placeholder: 'Заметка… (поддерживается Markdown), например:\n' +
+                '  **жирный** *курсив* `код`\n' +
+                '  - пункт1\n' +
+                '  - пункт2\n' +
+                '  [название ссылки](адрес ссылки)',
         },
     });
     textarea.value = task.note || '';
@@ -73,11 +73,6 @@ export function openNoteModal(task) {
 
     // Подсказка + кнопки
     const footer = createElement('div', { className: 'note-modal__footer' });
-
-    const hint = createElement('span', {
-        className: 'note-modal__hint',
-        text: '',
-    });
 
     const actions = createElement('div', { className: 'note-modal__actions' });
 
@@ -107,7 +102,6 @@ export function openNoteModal(task) {
     });
     actions.appendChild(saveBtn);
 
-    footer.appendChild(hint);
     footer.appendChild(actions);
     modal.appendChild(footer);
 
