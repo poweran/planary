@@ -19,6 +19,48 @@ class FocusTimer {
         this._running = false;
         this._widget = null;
         this._taskTitle = null;
+        this._audioCtx = null;
+    }
+
+    _initAudio() {
+        try {
+            if (!this._audioCtx) {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (AudioContext) {
+                    this._audioCtx = new AudioContext();
+                }
+            }
+            if (this._audioCtx && this._audioCtx.state === 'suspended') {
+                this._audioCtx.resume();
+            }
+        } catch (e) {
+            console.warn('Audio init error:', e);
+        }
+    }
+
+    _playAlertSound() {
+        if (!this._audioCtx) return;
+        try {
+            const playBeep = (time) => {
+                const osc = this._audioCtx.createOscillator();
+                const gain = this._audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(this._audioCtx.destination);
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(800, time);
+                gain.gain.setValueAtTime(0, time);
+                gain.gain.linearRampToValueAtTime(0.5, time + 0.05);
+                gain.gain.exponentialRampToValueAtTime(0.01, time + 0.3);
+                osc.start(time);
+                osc.stop(time + 0.3);
+            };
+            const now = this._audioCtx.currentTime;
+            playBeep(now);
+            playBeep(now + 0.3);
+            playBeep(now + 0.6);
+        } catch (e) {
+            console.warn('Audio play error:', e);
+        }
     }
 
     /**
@@ -46,6 +88,7 @@ class FocusTimer {
 
     start() {
         if (this._running) return;
+        this._initAudio();
         this._running = true;
         this._interval = setInterval(() => {
             this._remaining--;
@@ -81,6 +124,8 @@ class FocusTimer {
 
     _onComplete() {
         this.stop();
+
+        this._playAlertSound();
 
         // Уведомление
         if (Notification.permission === 'granted') {
