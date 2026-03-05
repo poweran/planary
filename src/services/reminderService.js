@@ -11,17 +11,21 @@ class ReminderService {
         this._notifiedIds = new Set(); // Не уведомлять повторно
     }
 
+    async requestPermission() {
+        if (!('Notification' in window)) return false;
+        if (Notification.permission === 'default') {
+            await Notification.requestPermission();
+        }
+        return Notification.permission === 'granted';
+    }
+
     /**
-     * Запросить разрешение и начать опрос
+     * Запустить опрос (без запроса разрешения)
      */
     async start() {
         if (!('Notification' in window)) {
             console.warn('Notifications API не поддерживается');
             return;
-        }
-
-        if (Notification.permission === 'default') {
-            await Notification.requestPermission();
         }
 
         // Проверка каждые 30 секунд
@@ -41,6 +45,7 @@ class ReminderService {
      * Установить напоминание для задачи
      */
     async setReminder(taskId, date) {
+        await this.requestPermission();
         await db.tasks.update(taskId, {
             reminderAt: date,
             updatedAt: new Date(),

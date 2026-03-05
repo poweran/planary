@@ -586,9 +586,79 @@
     font-weight: 600;
     color: var(--streak-orange);
     background: rgba(255, 107, 53, 0.1);
+    cursor: pointer;
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.2s ease, box-shadow 0.2s ease;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.streak:hover {
+    transform: scale(1.05);
+    background: rgba(255, 107, 53, 0.15);
+    box-shadow: 0 2px 8px rgba(255, 107, 53, 0.2);
+}
+
+.streak:active {
+    transform: scale(0.95);
+}
+
+.streak--bump {
+    animation: streakBump 0.3s ease-out;
+}
+
+@keyframes streakBump {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.15);
+    }
+
+    100% {
+        transform: scale(1);
+    }
 }
 
 .streak__icon {
     font-size: var(--font-size-sm);
     line-height: 1;
+    display: inline-block;
+    transition: transform 0.3s ease;
+    transform-origin: bottom center;
+}
+
+.streak:hover .streak__icon {
+    animation: fireWiggle 0.6s ease-in-out infinite alternate;
+}
+
+@keyframes fireWiggle {
+    0% {
+        transform: rotate(-10deg) scale(1.1);
+    }
+
+    100% {
+        transform: rotate(10deg) scale(1.1);
+    }
+}
+
+/* Искры */
+.streak-spark {
+    position: fixed;
+    pointer-events: none;
+    z-index: 1000;
+    font-size: 14px;
+    animation: sparkFly 0.8s ease-out forwards;
+}
+
+@keyframes sparkFly {
+    0% {
+        transform: translate(0, 0) scale(0.5);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translate(var(--tx), var(--ty)) scale(1.2);
+        opacity: 0;
+    }
 }

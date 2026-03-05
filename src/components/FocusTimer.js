@@ -89,6 +89,11 @@ class FocusTimer {
     start() {
         if (this._running) return;
         this._initAudio();
+
+        if ('Notification' in window && Notification.permission === 'default') {
+            Notification.requestPermission();
+        }
+
         this._running = true;
         this._interval = setInterval(() => {
             this._remaining--;
