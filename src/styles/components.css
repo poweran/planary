@@ -407,6 +407,35 @@
     transform: translateY(0);
 }
 
+.chaos-btn--frog {
+    background: rgba(76, 175, 80, 0.1);
+    color: var(--frog-green);
+    padding: var(--spacing-2xs) var(--spacing-xs);
+    font-size: var(--font-size-sm);
+}
+
+.chaos-btn--frog:hover {
+    background: rgba(76, 175, 80, 0.25);
+}
+
+/* Подсветка лягушки */
+.task-card--frog-highlight {
+    animation: frogPulse 0.6s ease 3;
+    z-index: 10;
+}
+
+@keyframes frogPulse {
+
+    0%,
+    100% {
+        box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.4);
+    }
+
+    50% {
+        box-shadow: 0 0 12px 4px rgba(76, 175, 80, 0.6);
+    }
+}
+
 /* ── Theme toggle ── */
 .theme-toggle {
     display: flex;
@@ -465,6 +494,39 @@
     background: var(--color-divider);
     margin: var(--spacing-xs) 0;
 }
+
+.context-menu__has-submenu {
+    position: relative;
+    padding-right: calc(var(--spacing-md) + 16px);
+}
+
+.context-menu__has-submenu::after {
+    content: "▶";
+    position: absolute;
+    right: 12px;
+    font-size: 8px;
+    opacity: 0.5;
+}
+
+.context-menu__submenu {
+    display: none;
+    position: absolute;
+    left: calc(100% - 4px);
+    top: -1px;
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    padding: var(--spacing-xs);
+    min-width: 160px;
+    z-index: 201;
+}
+
+.context-menu__has-submenu:hover .context-menu__submenu {
+    display: block;
+    animation: menuFadeIn 150ms ease;
+}
+
 
 /* ── Color picker ── */
 .color-picker {

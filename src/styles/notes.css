@@ -1,0 +1,250 @@
+/* ═══════════════════════════════════════════
+   ПЛАНАРИЙ — Заметки
+   ═══════════════════════════════════════════ */
+
+.note-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(3px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.15s ease;
+}
+
+.note-modal {
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    width: min(480px, 92vw);
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--shadow-lg);
+    animation: noteSlideUp 0.2s ease;
+    overflow: hidden;
+}
+
+@keyframes noteSlideUp {
+    from {
+        transform: translateY(12px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* ── Header ── */
+.note-modal__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-bottom: 1px solid var(--color-divider);
+}
+
+.note-modal__title {
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    color: var(--color-text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+}
+
+.note-modal__close {
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    color: var(--color-text-tertiary);
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-sm);
+    flex-shrink: 0;
+}
+
+.note-modal__close:hover {
+    background: var(--color-bg-hover);
+    color: var(--color-text);
+}
+
+/* ── Editor ── */
+.note-modal__editor {
+    width: 100%;
+    min-height: 120px;
+    max-height: 300px;
+    border: none;
+    border-bottom: 1px solid var(--color-divider);
+    padding: var(--spacing-md);
+    font-family: inherit;
+    font-size: var(--font-size-sm);
+    color: var(--color-text);
+    background: transparent;
+    resize: none;
+    line-height: 1.6;
+    outline: none;
+}
+
+.note-modal__editor::placeholder {
+    color: var(--color-text-tertiary);
+}
+
+/* ── Preview (live) ── */
+.note-modal__preview {
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-bottom: 1px solid var(--color-divider);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+    background: var(--color-bg);
+    max-height: 150px;
+    overflow-y: auto;
+    line-height: 1.6;
+}
+
+/* ── Markdown body ── */
+.markdown-body h2 {
+    font-size: var(--font-size-md);
+    margin: var(--spacing-xs) 0;
+    font-weight: 600;
+}
+
+.markdown-body h3 {
+    font-size: var(--font-size-sm);
+    margin: var(--spacing-xs) 0;
+    font-weight: 600;
+}
+
+.markdown-body h4 {
+    font-size: var(--font-size-sm);
+    margin: var(--spacing-xs) 0;
+    font-style: italic;
+}
+
+.markdown-body strong {
+    font-weight: 600;
+}
+
+.markdown-body em {
+    font-style: italic;
+}
+
+.markdown-body code {
+    background: var(--color-bg-hover);
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-family: 'SF Mono', 'JetBrains Mono', monospace;
+    font-size: 0.85em;
+}
+
+.markdown-body ul {
+    padding-left: 1.2em;
+    margin: var(--spacing-2xs) 0;
+}
+
+.markdown-body li {
+    margin: 2px 0;
+}
+
+.markdown-body a {
+    color: var(--color-primary);
+    text-decoration: none;
+}
+
+.markdown-body a:hover {
+    text-decoration: underline;
+}
+
+/* ── Footer ── */
+.note-modal__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--spacing-xs) var(--spacing-md);
+    gap: var(--spacing-sm);
+}
+
+.note-modal__hint {
+    font-size: 10px;
+    color: var(--color-text-tertiary);
+    font-family: 'SF Mono', monospace;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.note-modal__actions {
+    display: flex;
+    gap: var(--spacing-xs);
+    flex-shrink: 0;
+}
+
+.note-modal__btn {
+    padding: var(--spacing-2xs) var(--spacing-sm);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-xs);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    border: none;
+}
+
+.note-modal__btn--primary {
+    background: var(--color-primary);
+    color: white;
+}
+
+.note-modal__btn--primary:hover {
+    filter: brightness(1.1);
+}
+
+.note-modal__btn--ghost {
+    background: transparent;
+    color: var(--color-text-tertiary);
+}
+
+.note-modal__btn--ghost:hover {
+    background: var(--color-bg-hover);
+    color: var(--color-danger, #e74c3c);
+}
+
+/* ── Note indicators on task card ── */
+.task-card__note-icon {
+    font-size: 10px;
+    opacity: 0.5;
+    cursor: pointer;
+    transition: opacity 0.15s;
+}
+
+.task-card__note-icon:hover {
+    opacity: 1;
+}
+
+/* ── btn--primary (global) ── */
+.btn--primary {
+    padding: var(--spacing-xs) var(--spacing-md);
+    background: var(--color-primary);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-xs);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.btn--primary:hover {
+    filter: brightness(1.1);
+}

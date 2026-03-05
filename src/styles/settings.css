@@ -121,3 +121,67 @@
 .settings-link:hover {
     text-decoration: underline;
 }
+
+/* ═══════════════════════════════════════════
+   Шорткаты — модалка справки
+   ═══════════════════════════════════════════ */
+
+.shortcuts-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn var(--transition-normal) ease;
+}
+
+.shortcuts-modal {
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    box-shadow: var(--shadow-lg);
+    min-width: 320px;
+}
+
+.shortcuts-modal h3 {
+    margin: 0 0 var(--spacing-md) 0;
+    font-size: var(--font-size-md);
+    color: var(--color-text);
+}
+
+.shortcuts-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.shortcuts-table td {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: var(--font-size-sm);
+    color: var(--color-text);
+    border-bottom: 1px solid var(--color-divider);
+}
+
+.shortcuts-table td:first-child {
+    white-space: nowrap;
+    color: var(--color-text-secondary);
+}
+
+.shortcuts-table kbd {
+    display: inline-block;
+    padding: 2px 6px;
+    font-family: inherit;
+    font-size: var(--font-size-xs);
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    box-shadow: 0 1px 0 var(--color-border);
+    min-width: 20px;
+    text-align: center;
+}

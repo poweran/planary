@@ -13,6 +13,7 @@ import { initToasts } from './components/Toast.js';
 import { midnightService } from './services/midnightService.js';
 import { achievementService } from './services/achievementService.js';
 import { reminderService } from './services/reminderService.js';
+import { keyboardService } from './services/keyboardService.js';
 import { $ } from './utils/dom.js';
 
 export class App {
@@ -72,6 +73,9 @@ export class App {
 
         // Напоминания
         await reminderService.start();
+
+        // Клавиатурные шорткаты
+        keyboardService.start();
 
         // Midnight service
         await midnightService.start();

@@ -6,6 +6,7 @@ import { createElement, svgIcon, Icons } from '../utils/dom.js';
 import { renderTaskCard } from './TaskCard.js';
 import { renderTaskInput } from './TaskInput.js';
 import { taskService } from '../services/taskService.js';
+import { tagService } from '../services/tagService.js';
 import { events, Events } from '../core/events.js';
 
 /**
@@ -65,6 +66,18 @@ export function renderArea(area, tasks, allTags, collapsed = false) {
             });
         });
         actions.appendChild(shuffleBtn);
+
+        // Кнопка «Вытащить лягушку»
+        const frogBtn = createElement('button', {
+            className: 'chaos-btn chaos-btn--frog',
+            text: '🐸',
+            attrs: { 'aria-label': 'Вытащить лягушку', title: 'Случайная лягушка' },
+        });
+        frogBtn.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            await highlightFrog(el);
+        });
+        actions.appendChild(frogBtn);
     }
 
     // Collapse icon (mobile)
@@ -145,4 +158,50 @@ function renderEmptyState(areaId) {
             createElement('div', { text: messages[areaId] || 'Пусто' }),
         ],
     });
+}
+
+/**
+ * Подсветить случайную «лягушку» в области
+ */
+async function highlightFrog(areaEl) {
+    const frogTag = await tagService.findByName('лягушки');
+    if (!frogTag) {
+        events.emit(Events.TOAST, '🐸 Создайте тег #лягушки и добавьте его к неприятным делам!');
+        return;
+    }
+
+    const cards = areaEl.querySelectorAll('.task-card');
+    const frogCards = [];
+
+    cards.forEach(card => {
+        const taskId = Number(card.dataset.taskId);
+        if (taskId) frogCards.push(card);
+    });
+
+    // Нужно проверить у каких карточек есть тег лягушки
+    // Получаем задачи из базы
+    const tasks = await taskService.getByArea('chaos');
+    const frogTasks = tasks.filter(t => !t.completed && t.tags && t.tags.includes(frogTag.id));
+
+    if (frogTasks.length === 0) {
+        events.emit(Events.TOAST, '🐸 Нет лягушек — отлично!');
+        return;
+    }
+
+    // Случайная лягушка
+    const randomFrog = frogTasks[Math.floor(Math.random() * frogTasks.length)];
+
+    // Находим карточку
+    const frogCard = areaEl.querySelector(`.task-card[data-task-id="${randomFrog.id}"]`);
+    if (!frogCard) return;
+
+    // Убираем предыдущую подсветку
+    areaEl.querySelectorAll('.task-card--frog-highlight').forEach(c => c.classList.remove('task-card--frog-highlight'));
+
+    // Подсвечиваем
+    frogCard.classList.add('task-card--frog-highlight');
+    frogCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+    // Убираем подсветку через 3 секунды
+    setTimeout(() => frogCard.classList.remove('task-card--frog-highlight'), 3000);
 }

@@ -11,6 +11,7 @@ export function createTask({
     tags = [],
     order = 0,
     reminderAt = null,
+    recurrence = null,
 }) {
     return {
         title,
@@ -21,6 +22,7 @@ export function createTask({
         tags,
         order,
         reminderAt,
+        recurrence,
         completed: false,
         completedAt: null,
         createdAt: new Date(),

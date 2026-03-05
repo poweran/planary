@@ -32,6 +32,14 @@ class TagService {
     }
 
     /**
+     * Найти тег по имени (без создания)
+     */
+    async findByName(name) {
+        const normalized = name.toLowerCase().trim();
+        return db.tags.where('name').equals(normalized).first() || null;
+    }
+
+    /**
      * Получить тег по ID
      */
     async getById(id) {

@@ -7,6 +7,9 @@ import { makeDraggable } from '../utils/dragDrop.js';
 import { taskService } from '../services/taskService.js';
 import { tagService } from '../services/tagService.js';
 import { reminderService } from '../services/reminderService.js';
+import { openNoteModal } from './NoteModal.js';
+import { focusTimer } from './FocusTimer.js';
+import { truncateNote } from '../utils/markdown.js';
 import { events, Events } from '../core/events.js';
 import { TASK_COLORS } from '../models/task.js';
 import { getTagStyles } from '../models/tag.js';
@@ -65,11 +68,27 @@ export function renderTaskCard(task, allTags = []) {
 
     body.appendChild(title);
 
-    // Notes preview
+    // Note icon (if has note)
     if (task.note) {
-        body.appendChild(createElement('div', {
-            className: 'task-card__note-preview',
-            text: task.note,
+        const noteIcon = createElement('span', {
+            className: 'task-card__note-icon',
+            text: '📝',
+            attrs: { title: truncateNote(task.note) },
+        });
+        noteIcon.addEventListener('click', (e) => {
+            e.stopPropagation();
+            openNoteModal(task);
+        });
+        body.appendChild(noteIcon);
+    }
+
+    // Recurrence icon
+    if (task.recurrence) {
+        const recLabels = { daily: 'Ежедневно', weekly: 'Еженедельно', monthly: 'Ежемесячно' };
+        body.appendChild(createElement('span', {
+            className: 'task-card__note-icon',
+            text: '🔁',
+            attrs: { title: recLabels[task.recurrence] || 'Повторяется' },
         }));
     }
 
@@ -243,6 +262,75 @@ function showTaskContextMenu(e, task) {
     // Разделитель
     menu.appendChild(createElement('div', { className: 'context-menu__divider' }));
 
+    // Заметка
+    const noteItem = createElement('div', {
+        className: 'context-menu__item',
+        text: `📝 ${task.note ? 'Редактировать заметку' : 'Добавить заметку'}`,
+    });
+    noteItem.addEventListener('click', () => {
+        menu.remove();
+        openNoteModal(task);
+    });
+    menu.appendChild(noteItem);
+
+    // Фокус (Pomodoro)
+    const focusItem = createElement('div', {
+        className: 'context-menu__item',
+        text: '🍅 Фокус',
+    });
+    focusItem.addEventListener('click', () => {
+        menu.remove();
+        focusTimer.toggle(task.title);
+    });
+    menu.appendChild(focusItem);
+
+    // Повторять
+    const recurrenceOptions = [
+        { label: '📅 Ежедневно', value: 'daily' },
+        { label: '📆 Еженедельно', value: 'weekly' },
+        { label: '🗓️ Ежемесячно', value: 'monthly' },
+    ];
+
+    const recLabel = createElement('div', {
+        className: 'context-menu__item context-menu__has-submenu',
+        text: `🔁 ${task.recurrence ? 'Повторяется' : 'Повторять'}`,
+    });
+
+    const recSubmenu = createElement('div', { className: 'context-menu__submenu' });
+    recLabel.appendChild(recSubmenu);
+    menu.appendChild(recLabel);
+
+    for (const opt of recurrenceOptions) {
+        const item = createElement('div', {
+            className: `context-menu__item${task.recurrence === opt.value ? ' context-menu__item--active' : ''}`,
+            style: { fontSize: 'var(--font-size-xs)' },
+            text: `${opt.label}${task.recurrence === opt.value ? ' ✓' : ''}`,
+        });
+        item.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            await taskService.update(task.id, { recurrence: opt.value });
+            menu.remove();
+        });
+        recSubmenu.appendChild(item);
+    }
+
+    if (task.recurrence) {
+        const clearRec = createElement('div', {
+            className: 'context-menu__item context-menu__item--danger',
+            style: { fontSize: 'var(--font-size-xs)' },
+            text: '❌ Не повторять',
+        });
+        clearRec.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            await taskService.update(task.id, { recurrence: null });
+            menu.remove();
+        });
+        recSubmenu.appendChild(clearRec);
+    }
+
+    // Разделитель
+    menu.appendChild(createElement('div', { className: 'context-menu__divider' }));
+
     // Удалить
     const deleteItem = createElement('div', {
         className: 'context-menu__item context-menu__item--danger',
@@ -265,18 +353,22 @@ function showTaskContextMenu(e, task) {
     ];
 
     const reminderLabel = createElement('div', {
-        className: 'context-menu__item',
+        className: 'context-menu__item context-menu__has-submenu',
         text: '⏰ Напомнить',
     });
+
+    const reminderSubmenu = createElement('div', { className: 'context-menu__submenu' });
+    reminderLabel.appendChild(reminderSubmenu);
     menu.appendChild(reminderLabel);
 
     for (const opt of reminderOptions) {
         const item = createElement('div', {
             className: 'context-menu__item',
-            style: { paddingLeft: '2rem', fontSize: 'var(--font-size-xs)' },
+            style: { fontSize: 'var(--font-size-xs)' },
             text: opt.label,
         });
-        item.addEventListener('click', async () => {
+        item.addEventListener('click', async (e) => {
+            e.stopPropagation();
             let date;
             if (opt.minutes) {
                 date = new Date(Date.now() + opt.minutes * 60_000);
@@ -290,20 +382,21 @@ function showTaskContextMenu(e, task) {
             await reminderService.setReminder(task.id, date);
             menu.remove();
         });
-        menu.appendChild(item);
+        reminderSubmenu.appendChild(item);
     }
 
     if (task.reminderAt) {
         const clearItem = createElement('div', {
             className: 'context-menu__item context-menu__item--danger',
-            style: { paddingLeft: '2rem', fontSize: 'var(--font-size-xs)' },
+            style: { fontSize: 'var(--font-size-xs)' },
             text: '❌ Убрать напоминание',
         });
-        clearItem.addEventListener('click', async () => {
+        clearItem.addEventListener('click', async (e) => {
+            e.stopPropagation();
             await reminderService.clearReminder(task.id);
             menu.remove();
         });
-        menu.appendChild(clearItem);
+        reminderSubmenu.appendChild(clearItem);
     }
 
     // Позиционирование

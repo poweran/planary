@@ -93,7 +93,35 @@ class TaskService {
         });
         const task = await db.tasks.get(id);
         events.emit(Events.TASK_COMPLETED, task);
+
+        // Если задача повторяющаяся — создать копию
+        if (task.recurrence) {
+            const targetArea = this._getRecurrenceArea(task.recurrence);
+            const newTask = createTask({
+                title: task.title,
+                note: task.note,
+                areaId: targetArea,
+                color: task.color,
+                tags: task.tags || [],
+                recurrence: task.recurrence,
+            });
+            await db.tasks.add(newTask);
+            events.emit(Events.TASK_CREATED, newTask);
+        }
+
         return task;
+    }
+
+    /**
+     * Определить область для повторяющейся задачи
+     */
+    _getRecurrenceArea(recurrence) {
+        switch (recurrence) {
+            case 'daily': return 'tomorrow';
+            case 'weekly': return 'future';
+            case 'monthly': return 'future';
+            default: return 'today';
+        }
     }
 
     /**

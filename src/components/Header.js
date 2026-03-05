@@ -6,6 +6,7 @@ import { createElement } from '../utils/dom.js';
 import { ThemeToggle } from './ThemeToggle.js';
 import { renderTagFilter } from './TagFilter.js';
 import { renderStreak } from './StreakCounter.js';
+import { focusTimer } from './FocusTimer.js';
 import { events, Events } from '../core/events.js';
 import { tagService } from '../services/tagService.js';
 import { archiveService } from '../services/archiveService.js';
@@ -74,6 +75,15 @@ export class Header {
             text: '⚙️',
         });
         actions.appendChild(settingsLink);
+
+        // Помодоро
+        const focusBtn = createElement('button', {
+            className: 'header__nav-link',
+            attrs: { title: 'Фокус-режим (Pomodoro)' },
+            text: '🍅',
+        });
+        focusBtn.addEventListener('click', () => focusTimer.toggle());
+        actions.appendChild(focusBtn);
 
         // Печать
         const printBtn = createElement('button', {
