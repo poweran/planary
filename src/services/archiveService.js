@@ -107,6 +107,28 @@ class ArchiveService {
     }
 
     /**
+     * Возвращает список активных дней и количество выполненных задач
+     */
+    async getDailyTaskCounts() {
+        const allTasks = await db.tasks.toArray();
+        const allCompleted = allTasks.filter(t => t.completed && t.completedAt);
+
+        const countByDay = {};
+        for (const t of allCompleted) {
+            const d = new Date(t.completedAt);
+            const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+            countByDay[key] = (countByDay[key] || 0) + 1;
+        }
+
+        const sortedDays = Object.keys(countByDay).sort((a, b) => b.localeCompare(a)); // Сортируем от новых к старым
+
+        return sortedDays.map(date => ({
+            date,
+            count: countByDay[date]
+        }));
+    }
+
+    /**
      * Данные для тепловой карты (последние N дней)
      * @returns {Array<{date: string, count: number}>}
      */

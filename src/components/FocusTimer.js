@@ -63,29 +63,6 @@ class FocusTimer {
         }
     }
 
-    /**
-     * Показать/скрыть виджет таймера
-     */
-    toggle(taskTitle = null) {
-        if (this._widget) {
-            this.close();
-            return;
-        }
-        this._taskTitle = taskTitle;
-        this._mode = MODES[0];
-        this._remaining = this._mode.duration;
-        this._running = false;
-        this._render();
-    }
-
-    close() {
-        this.stop();
-        if (this._widget) {
-            this._widget.remove();
-            this._widget = null;
-        }
-    }
-
     start() {
         if (this._running) return;
         this._initAudio();
@@ -149,53 +126,60 @@ class FocusTimer {
         this._updateDisplay();
     }
 
-    _render() {
-        this._widget = createElement('div', { className: 'focus-timer' });
+    /**
+     * Создать и вернуть DOM-элемент таймера для страницы
+     */
+    renderView(taskTitle = null) {
+        if (taskTitle) {
+            this._taskTitle = taskTitle;
+        }
+
+        // Если таймер не запущен и время кончилось, сбросим
+        if (!this._running && this._remaining <= 0) {
+            this._remaining = this._mode.duration;
+        }
+
+        this._widget = createElement('div', { className: 'pomodoro-view' });
 
         // Header
-        const header = createElement('div', { className: 'focus-timer__header' });
+        const header = createElement('div', { className: 'pomodoro-view__header' });
         header.appendChild(createElement('span', { text: '🍅 Фокус' }));
         if (this._taskTitle) {
             header.appendChild(createElement('span', {
-                className: 'focus-timer__task',
+                className: 'pomodoro-view__task',
                 text: this._taskTitle,
             }));
         }
-        const closeBtn = createElement('button', {
-            className: 'focus-timer__close',
-            text: '✕',
-        });
-        closeBtn.addEventListener('click', () => this.close());
-        header.appendChild(closeBtn);
         this._widget.appendChild(header);
 
         // Mode tabs
-        const tabs = createElement('div', { className: 'focus-timer__modes' });
+        const tabs = createElement('div', { className: 'pomodoro-view__modes' });
         for (const mode of MODES) {
             const tab = createElement('button', {
-                className: `focus-timer__mode${this._mode.id === mode.id ? ' focus-timer__mode--active' : ''}`,
+                className: `pomodoro-view__mode${this._mode.id === mode.id ? ' pomodoro-view__mode--active' : ''}`,
                 text: mode.label,
             });
             tab.addEventListener('click', () => {
                 this._switchMode(mode);
-                // Re-render tabs
-                tabs.querySelectorAll('.focus-timer__mode').forEach(t => t.classList.remove('focus-timer__mode--active'));
-                tab.classList.add('focus-timer__mode--active');
+                tabs.querySelectorAll('.pomodoro-view__mode').forEach(t => t.classList.remove('pomodoro-view__mode--active'));
+                tab.classList.add('pomodoro-view__mode--active');
             });
             tabs.appendChild(tab);
         }
         this._widget.appendChild(tabs);
 
         // Display
-        this._displayEl = createElement('div', { className: 'focus-timer__display' });
-        this._widget.appendChild(this._displayEl);
+        this._displayContainer = createElement('div', { className: `pomodoro-view__display-container${this._running ? ' pomodoro-view__display-container--running' : ''}` });
+        this._displayEl = createElement('div', { className: 'pomodoro-view__display' });
+        this._displayContainer.appendChild(this._displayEl);
+        this._widget.appendChild(this._displayContainer);
 
         // Controls
-        const controls = createElement('div', { className: 'focus-timer__controls' });
+        const controls = createElement('div', { className: 'pomodoro-view__controls' });
 
         this._playBtn = createElement('button', {
-            className: 'focus-timer__btn focus-timer__btn--play',
-            text: '▶',
+            className: 'pomodoro-view__btn pomodoro-view__btn--play',
+            text: this._running ? '⏸' : '▶',
         });
         this._playBtn.addEventListener('click', () => {
             if (this._running) {
@@ -206,7 +190,7 @@ class FocusTimer {
         });
 
         const resetBtn = createElement('button', {
-            className: 'focus-timer__btn',
+            className: 'pomodoro-view__btn',
             text: '↺',
         });
         resetBtn.addEventListener('click', () => this.reset());
@@ -217,7 +201,7 @@ class FocusTimer {
 
         this._updateDisplay();
 
-        document.body.appendChild(this._widget);
+        return this._widget;
     }
 
     _updateDisplay() {
@@ -230,7 +214,16 @@ class FocusTimer {
         if (this._playBtn) {
             this._playBtn.textContent = this._running ? '⏸' : '▶';
         }
+
+        if (this._displayContainer) {
+            if (this._running) {
+                this._displayContainer.classList.add('pomodoro-view__display-container--running');
+            } else {
+                this._displayContainer.classList.remove('pomodoro-view__display-container--running');
+            }
+        }
     }
 }
 
 export const focusTimer = new FocusTimer();
+

@@ -10,10 +10,12 @@ import { focusTimer } from './FocusTimer.js';
 import { events, Events } from '../core/events.js';
 import { tagService } from '../services/tagService.js';
 import { archiveService } from '../services/archiveService.js';
+import { TagManager } from './TagManager.js';
 
 export class Header {
     constructor() {
         this.themeToggle = new ThemeToggle();
+        this.tagManager = new TagManager();
         this.el = null;
         this.filterContainer = null;
         this.streakContainer = null;
@@ -95,22 +97,21 @@ export class Header {
         actions.appendChild(settingsLink);
 
         // Помодоро
-        const focusBtn = createElement('button', {
+        const focusBtn = createElement('a', {
             className: 'header__nav-link',
-            attrs: { title: 'Фокус-режим (Pomodoro)' },
+            attrs: { href: '#/pomodoro', title: 'Фокус-режим (Pomodoro)' },
             text: '🍅',
         });
-        focusBtn.addEventListener('click', () => focusTimer.toggle());
+        focusBtn.addEventListener('click', (e) => {
+            if (window.location.hash === '#/pomodoro') {
+                e.preventDefault();
+                window.location.hash = '#/';
+            }
+        });
         actions.appendChild(focusBtn);
 
-        // Печать
-        const printBtn = createElement('button', {
-            className: 'header__nav-link',
-            attrs: { title: 'Печать' },
-            text: '🖨️',
-        });
-        printBtn.addEventListener('click', () => window.print());
-        actions.appendChild(printBtn);
+        // Управление тегами
+        actions.appendChild(this.tagManager.render());
 
         // Переключатель темы
         actions.appendChild(this.themeToggle.render());

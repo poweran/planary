@@ -9,6 +9,9 @@ import { PlanningBoard } from './components/PlanningBoard.js';
 import { ArchiveView } from './components/ArchiveView.js';
 import { AchievementsView } from './components/AchievementsView.js';
 import { SettingsView } from './components/SettingsView.js';
+import { StreakView } from './components/StreakView.js';
+import { PomodoroView } from './components/PomodoroView.js';
+import { TagsView } from './components/TagsView.js';
 import { initToasts } from './components/Toast.js';
 import { midnightService } from './services/midnightService.js';
 import { achievementService } from './services/achievementService.js';
@@ -67,6 +70,21 @@ export class App {
                 main.innerHTML = '';
                 const settingsView = new SettingsView(main);
                 await settingsView.init();
+            })
+            .route('#/streak', async () => {
+                main.innerHTML = '';
+                const streakView = new StreakView(main);
+                await streakView.init();
+            })
+            .route('#/pomodoro', async () => {
+                main.innerHTML = '';
+                const pomodoroView = new PomodoroView(main);
+                await pomodoroView.init();
+            })
+            .route('#/tags', async () => {
+                main.innerHTML = '';
+                const tagsView = new TagsView(main);
+                await tagsView.init();
             });
 
         // Тосты
