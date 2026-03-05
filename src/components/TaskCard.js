@@ -28,6 +28,7 @@ export function renderTaskCard(task, allTags = []) {
     const card = createElement('div', {
         className: `task-card task-card--new${colorClass}${completedClass}`,
         dataset: { taskId: String(task.id), areaId: task.areaId },
+        style: { viewTransitionName: `task-${task.id}` }
     });
 
     // Pin

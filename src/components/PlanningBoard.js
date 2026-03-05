@@ -45,39 +45,33 @@ export class PlanningBoard {
             this.container.appendChild(this.boardEl);
         }
 
-        clearElement(this.boardEl);
-
         // Рендерим 4 области
         const activeFilter = appStore.state.activeFilter;
 
-        for (const area of areas) {
-            let areaTasks = tasks.filter(t => t.areaId === area.id);
-
-            // Фильтр по тегу
-            if (activeFilter) {
-                areaTasks = taskService.filterByTag(areaTasks, activeFilter);
+        const updateDOM = async () => {
+            clearElement(this.boardEl);
+            for (const area of areas) {
+                let areaTasks = tasks.filter(t => t.areaId === area.id);
+                if (activeFilter) areaTasks = taskService.filterByTag(areaTasks, activeFilter);
+                const searchQuery = appStore.state.searchQuery || '';
+                if (searchQuery.trim()) {
+                    const q = searchQuery.trim().toLowerCase();
+                    areaTasks = areaTasks.filter(t => t.title.toLowerCase().includes(q));
+                }
+                areaTasks.sort((a, b) => a.order - b.order);
+                const collapsed = appStore.state.collapsedAreas[area.id] || false;
+                const areaEl = renderArea(area, areaTasks, tags, collapsed);
+                this.boardEl.appendChild(areaEl);
             }
+            await restoreGridSizes(this.boardEl);
+            initResizers(this.boardEl);
+        };
 
-            // Фильтр по поиску
-            const searchQuery = appStore.state.searchQuery || '';
-            if (searchQuery.trim()) {
-                const q = searchQuery.trim().toLowerCase();
-                areaTasks = areaTasks.filter(t =>
-                    t.title.toLowerCase().includes(q)
-                );
-            }
-
-            // Сортировка по order
-            areaTasks.sort((a, b) => a.order - b.order);
-
-            const collapsed = appStore.state.collapsedAreas[area.id] || false;
-            const areaEl = renderArea(area, areaTasks, tags, collapsed);
-            this.boardEl.appendChild(areaEl);
+        if (document.startViewTransition) {
+            document.startViewTransition(updateDOM);
+        } else {
+            await updateDOM();
         }
-
-        // Инициализация ресайзеров (desktop only)
-        await restoreGridSizes(this.boardEl);
-        initResizers(this.boardEl);
     }
 
     _bindEvents() {
