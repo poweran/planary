@@ -45,6 +45,7 @@ export const appStore = createStore({
     tags: [],
     areas: [],
     activeFilter: null,      // ID активного тега-фильтра (null = все)
+    searchQuery: '',         // Текст глобального поиска
     theme: 'system',         // 'light' | 'dark' | 'system'
     collapsedAreas: {},      // { areaId: boolean } — для мобильных
     dragState: null,         // { taskId, sourceAreaId } при drag-and-drop

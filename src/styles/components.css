@@ -236,21 +236,28 @@
 
 .task-card__title-input {
     width: 100%;
-    padding: 2px 4px;
-    margin: -2px -4px;
-    border: 1px dashed var(--sticky-text-muted);
-    border-radius: 2px;
-    background: rgba(255, 255, 255, 0.3);
+    padding: 0;
+    margin-bottom: -2px;
+    /* компенсирует border-bottom, чтобы высота карточки не менялась */
+    border: none;
+    border-bottom: 1.5px solid rgba(0, 0, 0, 0.25);
+    border-radius: 0;
+    background: transparent;
     font-size: var(--font-size-sm);
     font-weight: 500;
     color: var(--sticky-text);
     outline: none;
     font-family: 'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', var(--font-family);
+    line-height: 1.4;
+    transition: border-color 0.15s ease, border-bottom-width 0.1s ease;
+    box-sizing: border-box;
 }
 
 .task-card__title-input:focus {
-    background: rgba(255, 255, 255, 0.6);
-    border-color: var(--color-primary);
+    border-bottom-color: var(--color-primary);
+    border-bottom-width: 2px;
+    margin-bottom: -2.5px;
+    /* компенсируем увеличенную толщину при фокусе */
 }
 
 .task-card__note-preview {
@@ -418,21 +425,49 @@
     background: rgba(76, 175, 80, 0.25);
 }
 
-/* Подсветка лягушки */
-.task-card--frog-highlight {
-    animation: frogPulse 0.6s ease 3;
+/* Анимация появления лягушки в топе */
+.task-card--frog-arrived {
+    animation: frogArrive 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     z-index: 10;
 }
 
-@keyframes frogPulse {
-
-    0%,
-    100% {
-        box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.4);
+@keyframes frogArrive {
+    0% {
+        transform: translateY(-50px) scale(0.8) rotate(-5deg);
+        opacity: 0;
+        filter: brightness(2) drop-shadow(0 0 20px rgba(76, 175, 80, 0.8));
     }
 
     50% {
-        box-shadow: 0 0 12px 4px rgba(76, 175, 80, 0.6);
+        transform: translateY(10px) scale(1.05) rotate(2deg);
+        filter: brightness(1.2);
+    }
+
+    100% {
+        transform: translateY(0) scale(1) rotate(0deg);
+        opacity: 1;
+        filter: brightness(1);
+    }
+}
+
+/* Анимация перемешивания */
+.task-card--shuffling {
+    animation: shuffleWave 0.5s ease-in-out;
+}
+
+@keyframes shuffleWave {
+
+    0%,
+    100% {
+        transform: scale(1) translate(0, 0);
+    }
+
+    25% {
+        transform: scale(0.95) translate(-5px, -2px) rotate(-1deg);
+    }
+
+    75% {
+        transform: scale(1.02) translate(5px, 2px) rotate(1deg);
     }
 }
 

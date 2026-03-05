@@ -24,6 +24,15 @@ db.version(2).stores({
     achievements: '++id, type, unlockedAt',
 });
 
+// Версия 3 — Мягкое удаление (soft delete)
+db.version(3).stores({
+    tasks: '++id, areaId, parentId, order, completed, completedAt, deleted, deletedAt, createdAt, updatedAt, *tags',
+    tags: '++id, &name, color, createdAt',
+    areas: '&id, order',
+    settings: '&key',
+    achievements: '++id, type, unlockedAt',
+});
+
 /**
  * Инициализация области по умолчанию
  */

@@ -3,9 +3,10 @@
  */
 
 import { createElement, svgIcon, Icons } from '../utils/dom.js';
+import { extractTags, stripTags } from '../utils/tagParser.js';
+import { tagService } from '../services/tagService.js';
 import { makeDraggable } from '../utils/dragDrop.js';
 import { taskService } from '../services/taskService.js';
-import { tagService } from '../services/tagService.js';
 import { reminderService } from '../services/reminderService.js';
 import { openNoteModal } from './NoteModal.js';
 import { focusTimer } from './FocusTimer.js';
@@ -67,6 +68,13 @@ export function renderTaskCard(task, allTags = []) {
     title.addEventListener('dblclick', () => startInlineEdit(card, task, title));
 
     body.appendChild(title);
+
+    // Двойной клик по всей карточке (кроме чекбокса) открывает редактирование
+    card.addEventListener('dblclick', (e) => {
+        if (e.target.closest('.task-card__checkbox') || e.target.closest('.task-card__title')) return;
+        const currentTitle = card.querySelector('.task-card__title');
+        if (currentTitle) startInlineEdit(card, task, currentTitle);
+    });
 
     // Note icon (if has note)
     if (task.note) {
@@ -170,17 +178,33 @@ function startInlineEdit(card, task, titleEl) {
     input.select();
 
     const save = async () => {
-        const newTitle = input.value.trim();
-        if (newTitle && newTitle !== task.title) {
-            await taskService.update(task.id, { title: newTitle });
+        const rawValue = input.value.trim();
+        if (rawValue && rawValue !== task.title) {
+            // Парсим теги из нового текста
+            const tagNames = extractTags(rawValue);
+            const newTitle = stripTags(rawValue) || rawValue;
+
+            // Создаём/находим теги и собираем их ID
+            const tagIds = [];
+            for (const name of tagNames) {
+                const tag = await tagService.getOrCreate(name);
+                tagIds.push(tag.id);
+            }
+
+            // Объединяем со старыми тегами (если новых нет — не затираем старые)
+            const mergedTags = tagIds.length > 0
+                ? [...new Set([...(task.tags || []), ...tagIds])]
+                : (task.tags || []);
+
+            await taskService.update(task.id, { title: newTitle, tags: mergedTags });
         } else {
             // Возвращаем оригинал
-            const newTitle2 = createElement('div', {
+            const titleEl2 = createElement('div', {
                 className: 'task-card__title',
                 text: task.title,
             });
-            newTitle2.addEventListener('dblclick', () => startInlineEdit(card, task, newTitle2));
-            input.replaceWith(newTitle2);
+            titleEl2.addEventListener('dblclick', () => startInlineEdit(card, task, titleEl2));
+            input.replaceWith(titleEl2);
         }
     };
 
@@ -347,13 +371,13 @@ function showTaskContextMenu(e, task) {
     // Разделитель
     menu.appendChild(createElement('div', { className: 'context-menu__divider' }));
 
-    // Удалить
+    // В корзину (soft delete)
     const deleteItem = createElement('div', {
         className: 'context-menu__item context-menu__item--danger',
-        html: `<span>${svgIcon(Icons.trash, 14)}</span> <span>Удалить</span>`,
+        html: `<span>${svgIcon(Icons.trash, 14)}</span> <span>В корзину</span>`,
     });
     deleteItem.addEventListener('click', async () => {
-        await taskService.delete(task.id);
+        await taskService.softDelete(task.id);
         menu.remove();
     });
     menu.appendChild(deleteItem);

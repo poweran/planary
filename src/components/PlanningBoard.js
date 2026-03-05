@@ -58,6 +58,15 @@ export class PlanningBoard {
                 areaTasks = taskService.filterByTag(areaTasks, activeFilter);
             }
 
+            // Фильтр по поиску
+            const searchQuery = appStore.state.searchQuery || '';
+            if (searchQuery.trim()) {
+                const q = searchQuery.trim().toLowerCase();
+                areaTasks = areaTasks.filter(t =>
+                    t.title.toLowerCase().includes(q)
+                );
+            }
+
             // Сортировка по order
             areaTasks.sort((a, b) => a.order - b.order);
 
@@ -81,10 +90,12 @@ export class PlanningBoard {
             events.on(Events.TASK_COMPLETED, rerender),
             events.on(Events.TASK_DELETED, rerender),
             events.on(Events.TASK_MOVED, rerender),
+            events.on(Events.TASK_RESTORED, rerender),
             events.on(Events.TASKS_SHUFFLED, rerender),
             events.on(Events.TAG_CREATED, rerender),
             events.on(Events.TAG_DELETED, rerender),
             events.on(Events.FILTER_CHANGED, rerender),
+            events.on(Events.SEARCH_CHANGED, rerender),
             events.on(Events.MIDNIGHT, rerender),
         );
 

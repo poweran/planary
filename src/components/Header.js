@@ -11,6 +11,7 @@ import { events, Events } from '../core/events.js';
 import { tagService } from '../services/tagService.js';
 import { archiveService } from '../services/archiveService.js';
 import { TagManager } from './TagManager.js';
+import { appStore } from '../core/store.js';
 
 export class Header {
     constructor() {
@@ -37,6 +38,56 @@ export class Header {
                 createElement('span', { text: 'Планарий' }),
             ],
         });
+
+        // Search
+        const searchWrap = createElement('div', { className: 'header__search-wrap' });
+        const searchBtn = createElement('button', {
+            className: 'header__search-btn',
+            attrs: { title: 'Поиск (клавиша /)' },
+            text: '🔍',
+        });
+        const searchInput = createElement('input', {
+            className: 'header__search-input',
+            attrs: {
+                type: 'text',
+                placeholder: 'Поиск задач...',
+            },
+        });
+        this._searchInput = searchInput;
+
+        let searchOpen = false;
+        const openSearch = () => {
+            searchOpen = true;
+            searchWrap.classList.add('header__search-wrap--open');
+            searchInput.focus();
+        };
+        const closeSearch = () => {
+            searchOpen = false;
+            searchInput.value = '';
+            searchWrap.classList.remove('header__search-wrap--open');
+            appStore.state.searchQuery = '';
+            events.emit(Events.SEARCH_CHANGED, '');
+        };
+
+        searchBtn.addEventListener('click', () => {
+            if (searchOpen) {
+                closeSearch();
+            } else {
+                openSearch();
+            }
+        });
+
+        searchInput.addEventListener('input', (e) => {
+            const q = e.target.value;
+            appStore.state.searchQuery = q;
+            events.emit(Events.SEARCH_CHANGED, q);
+        });
+        searchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeSearch();
+        });
+
+        searchWrap.appendChild(searchBtn);
+        searchWrap.appendChild(searchInput);
 
         // Tag filter
         this.filterContainer = createElement('div', {
@@ -129,6 +180,7 @@ export class Header {
         actions.appendChild(this.themeToggle.render());
 
         this.el.appendChild(logo);
+        this.el.appendChild(searchWrap);
         this.el.appendChild(this.filterContainer);
         this.el.appendChild(actions);
 

@@ -64,9 +64,12 @@ export const Events = {
     TASK_UPDATED: 'task:updated',
     TASK_COMPLETED: 'task:completed',
     TASK_DELETED: 'task:deleted',
+    TASK_RESTORED: 'task:restored',
     TASK_MOVED: 'task:moved',
     TASK_REORDERED: 'task:reordered',
     TASKS_SHUFFLED: 'tasks:shuffled',
+
+    SEARCH_CHANGED: 'search:changed',
 
     TAG_CREATED: 'tag:created',
     TAG_UPDATED: 'tag:updated',

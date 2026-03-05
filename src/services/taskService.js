@@ -10,20 +10,22 @@ import { tagService } from './tagService.js';
 
 class TaskService {
     /**
-     * Загрузить все задачи
+     * Загрузить все задачи (без удалённых)
      */
     async getAll() {
-        return db.tasks.orderBy('order').toArray();
+        const all = await db.tasks.orderBy('order').toArray();
+        return all.filter(t => !t.deleted);
     }
 
     /**
-     * Загрузить задачи области
+     * Загрузить задачи области (без удалённых)
      */
     async getByArea(areaId) {
-        return db.tasks
+        const all = await db.tasks
             .where('areaId')
             .equals(areaId)
             .sortBy('order');
+        return all.filter(t => !t.deleted);
     }
 
     /**
@@ -188,6 +190,9 @@ class TaskService {
                     }
                 }
             }
+        } else if (position === 'top') {
+            currentParentId = null;
+            areaTasks.unshift(task);
         } else {
             // position === 'bottom'
             currentParentId = null;
@@ -231,12 +236,69 @@ class TaskService {
     }
 
     /**
-     * Удалить задачу
+     * Мягкое удаление (перемещает в корзину)
      */
-    async delete(id) {
+    async softDelete(id) {
+        const task = await db.tasks.get(id);
+        if (!task) return;
+        await db.tasks.update(id, {
+            deleted: true,
+            deletedAt: new Date(),
+            updatedAt: new Date(),
+        });
+        events.emit(Events.TASK_DELETED, task);
+    }
+
+    /**
+     * Восстановить задачу из корзины
+     */
+    async restore(id) {
+        await db.tasks.update(id, {
+            deleted: false,
+            deletedAt: null,
+            updatedAt: new Date(),
+        });
+        const task = await db.tasks.get(id);
+        events.emit(Events.TASK_RESTORED, task);
+        return task;
+    }
+
+    /**
+     * Физическое удаление (только из корзины)
+     */
+    async permanentDelete(id) {
         const task = await db.tasks.get(id);
         await db.tasks.delete(id);
         events.emit(Events.TASK_DELETED, task);
+    }
+
+    /**
+     * Получить все задачи в корзине
+     */
+    async getDeleted() {
+        const all = await db.tasks.toArray();
+        return all
+            .filter(t => t.deleted)
+            .sort((a, b) => new Date(b.deletedAt) - new Date(a.deletedAt));
+    }
+
+    /**
+     * Очистить корзину (удалить все задачи из неё)
+     */
+    async clearTrash() {
+        const deleted = await this.getDeleted();
+        await db.transaction('rw', db.tasks, async () => {
+            for (const t of deleted) {
+                await db.tasks.delete(t.id);
+            }
+        });
+    }
+
+    /**
+     * Удалить задачу (устаревший метод, сохранён для обратной совместимости)
+     */
+    async delete(id) {
+        return this.softDelete(id);
     }
 
     /**

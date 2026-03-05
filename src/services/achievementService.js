@@ -112,7 +112,7 @@ class AchievementService {
         for (const t of completedTasks) {
             if (t.completedAt) {
                 const d = new Date(t.completedAt);
-                days.add(`${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`);
+                days.add(`${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`);
             }
         }
 

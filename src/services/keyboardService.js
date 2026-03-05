@@ -49,6 +49,10 @@ class KeyboardService {
                     e.preventDefault();
                     window.print();
                     break;
+                case '/':
+                    e.preventDefault();
+                    this._openSearch();
+                    break;
                 case '?':
                     e.preventDefault();
                     this._showHelp();
@@ -89,6 +93,11 @@ class KeyboardService {
         }
     }
 
+    _openSearch() {
+        const searchBtn = document.querySelector('.header__search-btn');
+        if (searchBtn) searchBtn.click();
+    }
+
     _showHelp() {
         // Убираем предыдущую
         this._closeHelp();
@@ -103,6 +112,7 @@ class KeyboardService {
                     <tr><td><kbd>2</kbd></td><td>Новая задача → Завтра</td></tr>
                     <tr><td><kbd>3</kbd></td><td>Новая задача → Хаос</td></tr>
                     <tr><td><kbd>4</kbd></td><td>Новая задача → На будущее</td></tr>
+                    <tr><td><kbd>/</kbd></td><td>Глобальный поиск</td></tr>
                     <tr><td><kbd>P</kbd></td><td>Печать</td></tr>
                     <tr><td><kbd>?</kbd></td><td>Эта справка</td></tr>
                     <tr><td><kbd>Esc</kbd></td><td>Закрыть</td></tr>

@@ -61,8 +61,10 @@ export function renderArea(area, tasks, allTags, collapsed = false) {
             // Анимация
             const cards = el.querySelectorAll('.task-card');
             cards.forEach((card, i) => {
-                setTimeout(() => card.classList.add('task-card--shuffling'), i * 50);
-                setTimeout(() => card.classList.remove('task-card--shuffling'), i * 50 + 400);
+                card.classList.remove('task-card--shuffling');
+                void card.offsetWidth; // Force reflow
+                setTimeout(() => card.classList.add('task-card--shuffling'), i * 30);
+                setTimeout(() => card.classList.remove('task-card--shuffling'), 600 + i * 30);
             });
         });
         actions.appendChild(shuffleBtn);
@@ -98,6 +100,16 @@ export function renderArea(area, tasks, allTags, collapsed = false) {
 
     el.appendChild(header);
 
+    // 1. FIRST: Замеряем позиции старых элементов
+    const positions = new Map();
+    const existingAreaEl = document.querySelector(`.area[data-area-id="${area.id}"]`);
+    if (existingAreaEl) {
+        existingAreaEl.querySelectorAll('.task-node').forEach(node => {
+            const id = node.dataset.taskId;
+            if (id) positions.set(id, node.getBoundingClientRect());
+        });
+    }
+
     // Body (task list)
     const body = createElement('div', { className: 'area__body' });
 
@@ -108,6 +120,37 @@ export function renderArea(area, tasks, allTags, collapsed = false) {
         for (const task of rootTasks) {
             body.appendChild(renderTaskNode(task, activeTasks, allTags));
         }
+    }
+
+    // 2. LAST & INVERT: Применяем FLIP после того, как новые элементы созданы
+    if (positions.size > 0) {
+        requestAnimationFrame(() => {
+            body.querySelectorAll('.task-node').forEach(node => {
+                const id = node.dataset.taskId;
+                const oldRect = positions.get(id);
+                if (!oldRect) return;
+
+                const newRect = node.getBoundingClientRect();
+                const dy = oldRect.top - newRect.top;
+                const dx = oldRect.left - newRect.left;
+
+                if (dy !== 0 || dx !== 0) {
+                    node.style.transition = 'none';
+                    node.style.transform = `translate(${dx}px, ${dy}px)`;
+
+                    // Force reflow
+                    void node.offsetHeight;
+
+                    node.style.transition = 'transform 450ms cubic-bezier(0.23, 1, 0.32, 1)';
+                    node.style.transform = 'translate(0, 0)';
+
+                    setTimeout(() => {
+                        node.style.transition = '';
+                        node.style.transform = '';
+                    }, 500);
+                }
+            });
+        });
     }
 
     el.appendChild(body);
@@ -191,17 +234,16 @@ async function highlightFrog(areaEl) {
     // Случайная лягушка
     const randomFrog = frogTasks[Math.floor(Math.random() * frogTasks.length)];
 
-    // Находим карточку
-    const frogCard = areaEl.querySelector(`.task-card[data-task-id="${randomFrog.id}"]`);
-    if (!frogCard) return;
+    // Перемещаем в начало в БД
+    await taskService.reposition(randomFrog.id, 'chaos', null, 'top');
 
-    // Убираем предыдущую подсветку
-    areaEl.querySelectorAll('.task-card--frog-highlight').forEach(c => c.classList.remove('task-card--frog-highlight'));
-
-    // Подсвечиваем
-    frogCard.classList.add('task-card--frog-highlight');
-    frogCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-    // Убираем подсветку через 3 секунды
-    setTimeout(() => frogCard.classList.remove('task-card--frog-highlight'), 3000);
+    // Находим карточку после рендера и FLIP-анимации
+    setTimeout(() => {
+        const frogCard = areaEl.querySelector(`.task-card[data-task-id="${randomFrog.id}"]`);
+        if (frogCard) {
+            frogCard.classList.add('task-card--frog-arrived');
+            frogCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            setTimeout(() => frogCard.classList.remove('task-card--frog-arrived'), 1500);
+        }
+    }, 550); // Ждем окончания FLIP (450ms) + запас
 }

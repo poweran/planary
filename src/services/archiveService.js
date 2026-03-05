@@ -84,7 +84,7 @@ class ArchiveService {
         for (const t of allCompleted) {
             if (t.completedAt) {
                 const d = new Date(t.completedAt);
-                days.add(`${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`);
+                days.add(`${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`);
             }
         }
 
@@ -94,7 +94,7 @@ class ArchiveService {
         const check = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
         while (true) {
-            const key = `${check.getFullYear()}-${check.getMonth()}-${check.getDate()}`;
+            const key = `${check.getFullYear()}-${check.getMonth() + 1}-${check.getDate()}`;
             if (days.has(key)) {
                 streak++;
                 check.setDate(check.getDate() - 1);
@@ -172,13 +172,13 @@ class ArchiveService {
         const days = new Set();
         for (const t of allCompleted) {
             const d = new Date(t.completedAt);
-            days.add(`${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`);
+            days.add(`${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`);
         }
 
         // Calculate streaks
         const sortedDays = Array.from(days).map(str => {
             const [y, m, d] = str.split('-').map(Number);
-            return new Date(y, m, d).getTime();
+            return new Date(y, m - 1, d).getTime();
         }).sort((a, b) => a - b);
 
         let bestStreak = 0;
@@ -208,7 +208,7 @@ class ArchiveService {
         const check = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
         while (true) {
-            const key = `${check.getFullYear()}-${check.getMonth()}-${check.getDate()}`;
+            const key = `${check.getFullYear()}-${check.getMonth() + 1}-${check.getDate()}`;
             if (days.has(key)) {
                 currentStreak++;
                 check.setDate(check.getDate() - 1);
@@ -216,7 +216,7 @@ class ArchiveService {
                 // Если сегодня еще ничего нет, проверяем вчерашний день
                 if (currentStreak === 0) {
                     const yDay = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
-                    const yKey = `${yDay.getFullYear()}-${yDay.getMonth()}-${yDay.getDate()}`;
+                    const yKey = `${yDay.getFullYear()}-${yDay.getMonth() + 1}-${yDay.getDate()}`;
                     if (days.has(yKey)) {
                         check.setDate(check.getDate() - 1);
                         continue;
