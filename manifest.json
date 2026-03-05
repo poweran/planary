@@ -1,0 +1,25 @@
+{
+    "name": "Планарий",
+    "short_name": "Планарий",
+    "description": "Визуальный планировщик времени",
+    "start_url": "/planary/",
+    "scope": "/planary/",
+    "display": "standalone",
+    "theme_color": "#2D5A3D",
+    "background_color": "#F5F0E8",
+    "lang": "ru",
+    "icons": [
+        {
+            "src": "/planary/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/planary/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ]
+}
