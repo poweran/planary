@@ -321,6 +321,49 @@
     display: block;
 }
 
+
+/* Выпадающий список тегов при вводе # */
+.task-card__tag-suggestions {
+    position: absolute;
+    z-index: 1000;
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    max-height: 200px;
+    overflow-y: auto;
+    width: 200px;
+    display: none;
+    flex-direction: column;
+    padding: var(--spacing-2xs);
+}
+
+.task-card__tag-suggestions--active {
+    display: flex;
+}
+
+.tag-suggestion-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-xs);
+    cursor: pointer;
+    transition: background var(--transition-fast);
+}
+
+.tag-suggestion-item:hover,
+.tag-suggestion-item--selected {
+    background: var(--color-bg-hover);
+}
+
+.tag-suggestion-item__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
 /* ── Фильтр тегов ── */
 .tag-filter {
     display: flex;
